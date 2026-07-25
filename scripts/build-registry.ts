@@ -146,8 +146,11 @@ items.push({
   type: "registry:file",
   title: TITLES.tools,
   description: DESCRIPTIONS.tools,
-  // "~/" is shadcn's project-root escape; a bare path resolves under src/.
-  files: [{ path: "registry/tools/9am-ui.mjs", type: "registry:file", target: "~/scripts/9am-ui.mjs" }],
+  // Lands at src/scripts/9am-ui.mjs: shadcn resolves registry:file targets
+  // against the src root, and even the documented "~/" escape stays inside it.
+  // Not worth fighting — vite only bundles what is imported and tsc ignores
+  // .mjs, so a script living under src/ costs nothing.
+  files: [{ path: "registry/tools/9am-ui.mjs", type: "registry:file", target: "scripts/9am-ui.mjs" }],
 });
 
 // ---- lib ------------------------------------------------------------------

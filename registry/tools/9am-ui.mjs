@@ -2,8 +2,8 @@
 /**
  * 9am-ui — drift check for a script using the 9AM UI registry.
  *
- *   bun scripts/9am-ui.mjs check     compare installed kit files to the registry
- *   bun scripts/9am-ui.mjs doctor    verify auth, theme import and CEF css setup
+ *   bun src/scripts/9am-ui.mjs check    compare installed kit files to the registry
+ *   bun src/scripts/9am-ui.mjs doctor   verify auth, theme import and CEF css setup
  *
  * Zero dependencies, and deliberately NOT a package. Bun resolves `github:` and
  * `git+https:` dependencies through the GitHub tarball API, which 404s on a
