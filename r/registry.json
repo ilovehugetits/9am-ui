@@ -34,6 +34,19 @@
       ]
     },
     {
+      "name": "tools",
+      "type": "registry:file",
+      "title": "Drift Check CLI",
+      "description": "Zero-dependency `check` / `doctor` script, installed to scripts/9am-ui.mjs. Reuses the registry token already in components.json, so there is no second set of credentials to configure. Wire `check` into CI.",
+      "files": [
+        {
+          "path": "registry/tools/9am-ui.mjs",
+          "type": "registry:file",
+          "target": "scripts/9am-ui.mjs"
+        }
+      ]
+    },
+    {
       "name": "utils",
       "type": "registry:lib",
       "title": "cn()",

@@ -68,6 +68,7 @@ function scan(file: string) {
 const TITLES: Record<string, string> = {
   theme: "9AM Theme",
   fonts: "9AM Fonts (embedded)",
+  tools: "Drift Check CLI",
   nui: "NUI Bridge",
   i18n: "Runtime i18n",
   visibility: "Visibility Provider",
@@ -83,6 +84,8 @@ const DESCRIPTIONS: Record<string, string> = {
     "The 9AM design language: OKLCH token set for both palettes, the primary-50..950 ramp, radius scale, class-driven dark variant and the NUI base rules. Locked — `9am-ui check` fails on drift. Pair with @9am/fonts.",
   fonts:
     "Poppins + Phudu embedded as base64, so the theme installs with nothing else to fetch. Apps with several html entry points (DUI pages especially) should use `bunx 9am-ui fonts` for the linked variant instead.",
+  tools:
+    "Zero-dependency `check` / `doctor` script, installed to scripts/9am-ui.mjs. Reuses the registry token already in components.json, so there is no second set of credentials to configure. Wire `check` into CI.",
   nui: "fetchNui, useNuiEvent, debugData, isEnvBrowser and the per-script nui.config.ts.",
   i18n: "Runtime dictionary pulled from Lua via the getLocale callback, with English fallbacks for the kit's own strings.",
   visibility: "NUI frame visibility with ESC handling and focus release.",
@@ -132,6 +135,18 @@ items.push({
   title: TITLES.fonts,
   description: DESCRIPTIONS.fonts,
   files: [{ path: "registry/theme/9am-fonts.css", type: "registry:file", target: "src/styles/9am-fonts.css" }],
+});
+
+// ---- tools ----------------------------------------------------------------
+// Ships through the registry rather than as a package: bun resolves git deps
+// via the GitHub tarball API, which 404s on a private repo, so an installable
+// CLI would mean configuring auth a second time in every script and CI job.
+items.push({
+  name: "tools",
+  type: "registry:file",
+  title: TITLES.tools,
+  description: DESCRIPTIONS.tools,
+  files: [{ path: "registry/tools/9am-ui.mjs", type: "registry:file", target: "scripts/9am-ui.mjs" }],
 });
 
 // ---- lib ------------------------------------------------------------------
