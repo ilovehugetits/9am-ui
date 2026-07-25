@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "use-theme",
+  "title": "Theme Hook",
+  "description": "Light/dark store that reflects onto <html> and persists per script.",
+  "dependencies": [
+    "zustand@^5.0.14"
+  ],
+  "registryDependencies": [
+    "@9am/nui"
+  ],
+  "files": [
+    {
+      "path": "registry/nui/useTheme.ts",
+      "content": "import { create } from \"zustand\";\nimport { nuiConfig } from \"@/nui.config\";\n\nexport type Theme = \"light\" | \"dark\";\n\nconst STORAGE_KEY = nuiConfig.themeStorageKey;\n\n/** Read the persisted theme, falling back to the configured default. */\nfunction getInitialTheme(): Theme {\n    try {\n        const stored = localStorage.getItem(STORAGE_KEY);\n        if (stored === \"light\" || stored === \"dark\") return stored;\n    } catch {\n        /* localStorage may be unavailable in some CEF contexts */\n    }\n    return nuiConfig.defaultTheme;\n}\n\n/** Reflect the theme onto <html> (the `.dark` class drives every token + dark: variant) and persist it. */\nfunction applyTheme(theme: Theme) {\n    const root = document.documentElement;\n    root.classList.toggle(\"dark\", theme === \"dark\");\n    try {\n        localStorage.setItem(STORAGE_KEY, theme);\n    } catch {\n        /* ignore persistence failures */\n    }\n}\n\ninterface ThemeStore {\n    theme: Theme;\n    setTheme: (theme: Theme) => void;\n    toggleTheme: () => void;\n}\n\nexport const useTheme = create<ThemeStore>((set, get) => ({\n    // The inline script in index.html has already set the class; mirror it here.\n    theme: getInitialTheme(),\n    setTheme: (theme) => {\n        applyTheme(theme);\n        set({ theme });\n    },\n    toggleTheme: () => {\n        const next: Theme = get().theme === \"dark\" ? \"light\" : \"dark\";\n        applyTheme(next);\n        set({ theme: next });\n    },\n}));\n",
+      "type": "registry:hook"
+    }
+  ],
+  "type": "registry:file"
+}

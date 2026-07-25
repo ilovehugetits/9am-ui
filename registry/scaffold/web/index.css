@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Poppins + Phudu, embedded as base64 so there is nothing else to install.
+   If you add more html entry points (a phone app, a DUI texture page), switch
+   these to the linked variant instead — see `bunx 9am-ui fonts`. */
+@import "./styles/9am-fonts.css";
+
+/* The 9AM design language: tokens, both palettes, NUI base rules.
+   Managed by 9am-ui — do not edit that file, put your own styles below. */
+@import "./styles/9am-theme.css";
+
+/* --------------------------------------------------------------------------
+   Script-specific styles go here.
+   -------------------------------------------------------------------------- */

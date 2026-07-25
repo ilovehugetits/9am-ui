@@ -1,0 +1,19 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Tailwind scans the Vite root by default; the components being previewed live
+   outside it, so point the scanner at the registry explicitly. */
+@source "../../../registry/ui";
+@source "../../../registry/icons";
+@source "../../../registry/scaffold/web";
+
+@import "../../../registry/theme/9am-theme.css";
+
+/* The preview is a normal web page, not a NUI overlay: undo the transparent
+   background the kit sets for CEF so there is something to look at. */
+html,
+body,
+#root {
+  background-color: var(--background);
+  overflow: auto;
+}

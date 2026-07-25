@@ -1,0 +1,8 @@
+# The registry ships file contents verbatim to consumers, and CI diffs the
+# generated r/ against the sources. Letting git rewrite line endings per
+# platform would make that diff fail on Linux for Windows-authored files.
+* text=auto eol=lf
+
+*.woff2 binary
+*.png binary
+*.jpg binary

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "visibility",
+  "title": "Visibility Provider",
+  "description": "NUI frame visibility with ESC handling and focus release.",
+  "dependencies": [
+    "zustand@^5.0.14"
+  ],
+  "registryDependencies": [
+    "@9am/nui"
+  ],
+  "files": [
+    {
+      "path": "registry/nui/VisibilityProvider.tsx",
+      "content": "import React, { useEffect } from \"react\";\r\nimport { useNuiEvent } from \"@/hooks/useNuiEvent\";\r\nimport { fetchNui } from \"@/utils/fetchNui\";\r\nimport { isEnvBrowser } from \"@/utils/misc\";\r\nimport { create } from \"zustand\";\r\n\r\ninterface VisibilityStore {\r\n  visible: boolean;\r\n  setVisible: (visible: boolean) => void;\r\n}\r\n\r\nexport const useVisibilityStore = create<VisibilityStore>((set) => ({\r\n  visible: false,\r\n  setVisible: (visible: boolean) => set({ visible }),\r\n}));\r\n\r\nexport const VisibilityProvider: React.FC<{ children: React.ReactNode }> = ({\r\n  children,\r\n}) => {\r\n  const { visible, setVisible } = useVisibilityStore();\r\n\r\n  useNuiEvent<boolean>(\"setVisible\", setVisible);\r\n\r\n  useEffect(() => {\r\n    if (!visible) return;\r\n\r\n    const keyHandler = (e: KeyboardEvent) => {\r\n      if ([\"Escape\"].includes(e.code)) {\r\n        if (!isEnvBrowser()) fetchNui(\"hideFrame\");\r\n        else setVisible(!visible);\r\n      }\r\n    };\r\n\r\n    window.addEventListener(\"keydown\", keyHandler);\r\n\r\n    return () => window.removeEventListener(\"keydown\", keyHandler);\r\n  }, [visible, setVisible]);\r\n\r\n  return (\r\n    <div\r\n      style={{ height: \"100%\" }}\r\n      className={\r\n        visible\r\n          ? \"opacity-100 transition-[opacity,transform] duration-200 ease-out\"\r\n          : \"opacity-0 scale-[1.02] pointer-events-none invisible transition-[opacity,transform,visibility] duration-200 ease-in\"\r\n      }\r\n    >\r\n      {children}\r\n    </div>\r\n  );\r\n};\r\n\r\nexport const useVisibility = () => useVisibilityStore();",
+      "type": "registry:file",
+      "target": "src/providers/VisibilityProvider.tsx"
+    }
+  ],
+  "type": "registry:file"
+}

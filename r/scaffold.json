@@ -1,0 +1,81 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "scaffold",
+  "title": "Script Scaffold",
+  "description": "New-script web skeleton: vite/tsconfig/eslint/postcss (including the oklch conversion CEF requires), index.html, main.tsx and a starter App. Run `bunx 9am-ui lua` afterwards for the Lua half (NUI bridge, locale module, fxmanifest).",
+  "dependencies": [
+    "@tailwindcss/vite@^4.3.3",
+    "tailwindcss@^4.3.3",
+    "tw-animate-css@^1.4.0"
+  ],
+  "registryDependencies": [
+    "@9am/theme",
+    "@9am/nui",
+    "@9am/i18n",
+    "@9am/visibility",
+    "@9am/use-theme",
+    "@9am/utils",
+    "@9am/smooth-scroll",
+    "@9am/viewport",
+    "@9am/button",
+    "@9am/icon-x",
+    "@9am/icon-theme-toggle"
+  ],
+  "files": [
+    {
+      "path": "registry/scaffold/web/index.html",
+      "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>9AM Script</title>\n    <script>\n      // Apply the saved theme to <html> before first paint so there is no\n      // flash of the wrong theme. Keep the key in sync with the\n      // `themeStorageKey` in src/nui.config.ts.\n      (function () {\n        try {\n          var t = localStorage.getItem(\"9am-script:theme\");\n          if (t !== \"light\") document.documentElement.classList.add(\"dark\");\n        } catch (e) {\n          document.documentElement.classList.add(\"dark\");\n        }\n      })();\n    </script>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script type=\"module\" src=\"/src/main.tsx\"></script>\n  </body>\n</html>\n",
+      "type": "registry:file",
+      "target": "index.html"
+    },
+    {
+      "path": "registry/scaffold/web/index.css",
+      "content": "@import \"tailwindcss\";\n@import \"tw-animate-css\";\n\n/* Poppins + Phudu, embedded as base64 so there is nothing else to install.\n   If you add more html entry points (a phone app, a DUI texture page), switch\n   these to the linked variant instead — see `bunx 9am-ui fonts`. */\n@import \"./styles/9am-fonts.css\";\n\n/* The 9AM design language: tokens, both palettes, NUI base rules.\n   Managed by 9am-ui — do not edit that file, put your own styles below. */\n@import \"./styles/9am-theme.css\";\n\n/* --------------------------------------------------------------------------\n   Script-specific styles go here.\n   -------------------------------------------------------------------------- */\n",
+      "type": "registry:file",
+      "target": "src/index.css"
+    },
+    {
+      "path": "registry/scaffold/web/main.tsx",
+      "content": "import React from 'react';\nimport ReactDOM from 'react-dom/client';\nimport { VisibilityProvider } from './providers/VisibilityProvider';\nimport App from './components/App';\nimport { fetchNui } from './utils/fetchNui';\nimport { installSmoothScroll } from './lib/smooth-scroll';\nimport { initI18n } from './i18n';\nimport './index.css';\n\n// Pull the locale dictionary from Lua before anything is on screen. The dev\n// loader is only used by `bun run start` (plain browser, no Lua to ask) and is\n// dead-code-eliminated from production builds along with the en.json chunk.\ninitI18n(__DEV_SEED__ ? () => import('../../locales/en.json') : undefined);\n\n// Repairs wheel scroll in FiveM CEF and gives every scroller smooth easing.\ninstallSmoothScroll();\n\n// Top-level error boundary: a render crash must never leave the NUI frame\n// open with focus held, so release the frame and render nothing.\nclass AppErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {\n  state = { hasError: false };\n\n  static getDerivedStateFromError() {\n    return { hasError: true };\n  }\n\n  componentDidCatch(error: unknown, errorInfo: React.ErrorInfo) {\n    console.error('Unhandled UI error:', error, errorInfo);\n    fetchNui('hideFrame');\n  }\n\n  render() {\n    if (this.state.hasError) return null;\n    return this.props.children;\n  }\n}\n\nReactDOM.createRoot(document.getElementById('root')!).render(\n  <AppErrorBoundary>\n    <VisibilityProvider>\n      <App />\n    </VisibilityProvider>\n  </AppErrorBoundary>,\n);\n",
+      "type": "registry:file",
+      "target": "src/main.tsx"
+    },
+    {
+      "path": "registry/scaffold/web/App.tsx",
+      "content": "import { Button } from '@/components/ui/button';\nimport {\n  Viewport,\n  ViewportHeader,\n  ViewportTitle,\n  ViewportDescription,\n  ViewportAction,\n  ViewportContent,\n} from '@/components/ui/viewport';\nimport { XIcon } from '@/components/ui/x';\nimport { ThemeToggleIcon } from '@/components/ui/theme-toggle';\nimport { useTheme } from '@/hooks/useTheme';\nimport { fetchNui } from '@/utils/fetchNui';\nimport { useT } from '@/i18n';\n\n/**\n * Starting point for a 9AM script UI. Delete freely — it exists to show the\n * house style in one screen: a Viewport scroller with a pinning header, the\n * translucent control fill, and the exit affordance every 9AM NUI has.\n */\nexport default function App() {\n  const { theme, toggleTheme } = useTheme();\n  const t = useT();\n\n  return (\n    <div className=\"h-full w-full flex items-center justify-center p-8\">\n      <Viewport className=\"w-[900px] max-h-[80vh]\" fadeColor=\"var(--card)\">\n        <ViewportHeader className=\"px-4\">\n          <ViewportTitle className=\"!font-[phudu] text-2xl\">\n            {t('ui.app.title')}\n          </ViewportTitle>\n          <ViewportDescription>{t('ui.app.subtitle')}</ViewportDescription>\n          <ViewportAction className=\"flex items-center gap-2.5\">\n            <Button variant=\"default2\" className=\"h-9 px-3\" onClick={toggleTheme}>\n              <ThemeToggleIcon theme={theme} size={16} />\n            </Button>\n            <Button variant=\"default2\" className=\"h-9 px-3 gap-2.5\" onClick={() => fetchNui('hideFrame')}>\n              <div className=\"bg-foreground rounded-[4px] flex items-center justify-center w-4 h-4\">\n                <XIcon size={18} className=\"text-background\" />\n              </div>\n              <span>{t('ui.common.close')}</span>\n            </Button>\n          </ViewportAction>\n        </ViewportHeader>\n\n        <ViewportContent className=\"px-4 pt-2\">\n          <div className=\"rounded-xl bg-black/[0.05] dark:bg-white/10 border p-6\">\n            <p className=\"text-muted-foreground text-sm\">{t('ui.app.placeholder')}</p>\n          </div>\n        </ViewportContent>\n      </Viewport>\n    </div>\n  );\n}\n",
+      "type": "registry:file",
+      "target": "src/components/App.tsx"
+    },
+    {
+      "path": "registry/scaffold/web/vite.config.ts",
+      "content": "import path from \"path\"\nimport tailwindcss from \"@tailwindcss/vite\"\nimport react from \"@vitejs/plugin-react\"\nimport { defineConfig } from \"vite\"\n\nexport default defineConfig(({ mode }) => {\n  // `bun run production-build` → mode \"prod\": customer-ready dist with the\n  // browser dev seed / mock data compiled out and console noise stripped.\n  const isProd = mode === \"prod\"\n\n  return {\n    // Relative base: the NUI is loaded from a file path, not a web root.\n    base: './',\n    plugins: [react(), tailwindcss()],\n    resolve: {\n      alias: {\n        \"@\": path.resolve(__dirname, \"./src\"),\n      },\n    },\n    // postcss.config.js holds the oklch→CEF-safe conversion. Do not drop it.\n    css: {\n      postcss: './postcss.config.js'\n    },\n    // Compile-time flag: false in production-build, which dead-code-eliminates\n    // every dev-seed/mock-data path — their chunks are never emitted to dist.\n    define: {\n      __DEV_SEED__: JSON.stringify(!isProd),\n    },\n    esbuild: isProd\n      ? {\n          // Strip log/info/debug/warn calls; console.error stays (support\n          // diagnostics when a customer reports a UI crash).\n          pure: ['console.log', 'console.info', 'console.debug', 'console.warn'],\n          drop: ['debugger'],\n        }\n      : undefined,\n    build: {\n      rollupOptions: {\n        // Add more HTML entry points here (a phone app, a DUI texture page…):\n        //   input: { main: 'index.html', phone: 'phone.html' }\n        output: {\n          // Split heavyweight vendors out of the entry chunk: smaller files\n          // parse faster in CEF and vendor chunks stay byte-identical between\n          // releases (better caching, smaller diffs). Exact package matching —\n          // substring matching pulls stray packages across groups and creates\n          // circular chunks (TDZ crashes at runtime).\n          manualChunks(id) {\n            const m = id.replace(/\\\\/g, '/').match(/node_modules\\/((?:@[^/]+\\/)?[^/]+)/)\n            if (!m) return\n            const pkg = m[1]\n            if (pkg === 'react' || pkg === 'react-dom' || pkg === 'scheduler') return 'vendor-react'\n            if (pkg === 'recharts' || pkg.startsWith('d3-') || pkg === 'victory-vendor' || pkg === 'recharts-scale' || pkg === 'react-smooth') return 'vendor-charts'\n            if (pkg === 'framer-motion' || pkg === 'motion' || pkg === 'motion-dom' || pkg === 'motion-utils') return 'vendor-motion'\n            return 'vendor'\n          },\n        },\n      },\n    },\n  }\n})\n",
+      "type": "registry:file",
+      "target": "vite.config.ts"
+    },
+    {
+      "path": "registry/scaffold/web/postcss.config.js",
+      "content": "// DO NOT REMOVE postcss-color-converter.\n//\n// The 9AM theme tokens are authored in oklch (registry/theme/9am-theme.css).\n// FiveM's CEF is Chromium 103, which does not understand `oklch()` — without\n// this step every token resolves to nothing and the whole UI renders unstyled\n// in-game while looking perfectly fine in `bun run start`. This converts them\n// to a CEF-safe format at build time (Tailwind v4 separately emits hex\n// fallbacks ahead of each `color-mix()` behind an `@supports` guard).\n//\n// Verify after changing anything here:\n//   bun run build && grep -c oklch dist/assets/*.css   # must be 0\nexport default {\n    plugins: {\n        'postcss-color-converter': {\n            outputColorFormat: 'rgb',\n            ignore: ['hex']\n        },\n        '@tailwindcss/postcss': {},\n        autoprefixer: {}\n    }\n}\n",
+      "type": "registry:file",
+      "target": "postcss.config.js"
+    },
+    {
+      "path": "registry/scaffold/web/eslint.config.js",
+      "content": "import js from \"@eslint/js\";\nimport globals from \"globals\";\nimport tseslint from \"typescript-eslint\";\nimport reactHooks from \"eslint-plugin-react-hooks\";\nimport reactRefresh from \"eslint-plugin-react-refresh\";\n\nexport default tseslint.config(\n  { ignores: [\"dist\"] },\n  {\n    files: [\"src/**/*.{ts,tsx}\"],\n    extends: [\n      js.configs.recommended,\n      ...tseslint.configs.recommended,\n      reactHooks.configs.flat.recommended,\n    ],\n    languageOptions: {\n      ecmaVersion: 2020,\n      globals: globals.browser,\n    },\n    plugins: {\n      \"react-refresh\": reactRefresh,\n    },\n    rules: {\n      \"react-refresh/only-export-components\": [\n        \"warn\",\n        { allowConstantExport: true },\n      ],\n      // React-Compiler rules from react-hooks v7. The 9AM kit components are\n      // written against these; kept as warnings so an inherited pattern in your\n      // own code never blocks a build.\n      \"react-hooks/purity\": \"warn\",\n      \"react-hooks/set-state-in-effect\": \"warn\",\n      \"react-hooks/refs\": \"warn\",\n    },\n  }\n);\n",
+      "type": "registry:file",
+      "target": "eslint.config.js"
+    },
+    {
+      "path": "registry/scaffold/web/tsconfig.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2020\",\n    \"useDefineForClassFields\": true,\n    \"lib\": [\"ES2020\", \"DOM\", \"DOM.Iterable\"],\n    \"module\": \"ESNext\",\n    \"skipLibCheck\": true,\n\n    \"moduleResolution\": \"bundler\",\n    \"allowImportingTsExtensions\": true,\n    \"resolveJsonModule\": true,\n    \"isolatedModules\": true,\n    \"noEmit\": true,\n    \"jsx\": \"react-jsx\",\n\n    \"strict\": true,\n    \"noUnusedLocals\": true,\n    \"noUnusedParameters\": true,\n    \"noFallthroughCasesInSwitch\": true,\n\n    \"baseUrl\": \".\",\n    \"paths\": {\n      \"@/*\": [\"./src/*\"]\n    }\n  },\n  \"include\": [\"src\"],\n  \"references\": [{ \"path\": \"./tsconfig.node.json\" }]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.json"
+    },
+    {
+      "path": "registry/scaffold/web/tsconfig.node.json",
+      "content": "{\n  \"compilerOptions\": {\n    \"composite\": true,\n    \"skipLibCheck\": true,\n    \"module\": \"ESNext\",\n    \"moduleResolution\": \"bundler\",\n    \"allowSyntheticDefaultImports\": true,\n    \"strict\": true,\n    \"types\": [\"node\"]\n  },\n  \"include\": [\"vite.config.ts\"]\n}\n",
+      "type": "registry:file",
+      "target": "tsconfig.node.json"
+    }
+  ],
+  "type": "registry:file"
+}

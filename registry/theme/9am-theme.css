@@ -1,0 +1,244 @@
+/* --------------------------------------------------------------------------
+   9AM UI — THEME
+   Managed by 9am-ui. DO NOT EDIT BY HAND.
+
+   Installed with `bunx shadcn@latest add @9am/theme`. `bunx 9am-ui check`
+   hard-fails if this file drifts from the registry: identical tokens across
+   every script is what makes them read as siblings. Script-specific styling
+   belongs in your own index.css, below the import of this file.
+
+   Fonts are deliberately NOT imported here. Which font stylesheet you want is
+   a per-app decision this file must not make for you: 9am-fonts.css embeds the
+   faces as base64 (one-command install, right for a single-entry NUI), while
+   9am-fonts-linked.css references woff2 files (`bunx 9am-ui fonts`) and is the
+   right choice for apps with several html entries — notably DUI pages, where
+   each texture is its own CEF instance and would decode the base64 payload
+   again with nothing shared. Import one of them from your index.css.
+   -------------------------------------------------------------------------- */
+
+/* Make the `dark:` variant respond to a `.dark` class on the tree (set on <html>
+   by the theme toggle) instead of the OS `prefers-color-scheme` media query.
+   Without this, every `dark:` utility in the codebase keys off the player's OS
+   theme, which is neither what we want nor controllable from the UI. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+html,
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  height: 100vh;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+#root {
+  height: 100vh;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   THEME TOKENS
+   :root  = LIGHT theme (default when no `.dark` class is present)
+   .dark  = DARK theme (the original, "awesome" palette — byte-identical values)
+
+   `.dark` is applied to <html> by default (see index.html + useTheme), so the
+   dark theme is what ships out of the box. `.dark` comes after `:root` in source
+   order and both have equal specificity, so the dark values win when the class
+   is present — the standard shadcn ordering.
+
+   The `--radius` and the `--color-primary-*` ramp live in @theme inline below;
+   they are theme-agnostic and shared by both palettes.
+   -------------------------------------------------------------------------- */
+:root {
+  --radius: 0.625rem;
+
+  /* Surfaces — soft near-white base, pure-white raised cards for subtle depth */
+  --background: oklch(0.985 0.002 285.9);
+  --foreground: oklch(0.21 0.006 285.885);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.006 285.885);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.006 285.885);
+
+  /* Brand accent — a DEEPER amber than the dark theme's bright gold. Bright gold
+     (L≈0.91) is unreadable as text on white and washes out as a fill, so light
+     mode uses a single deeper gold that works both as `bg-primary` (with dark
+     text) and as `text-primary` on white. This is why ~40 `text-primary` usages
+     need no per-file edits. */
+  --primary: oklch(0.58 0.135 80);
+  --primary-foreground: oklch(0.985 0.015 95);
+
+  --secondary: oklch(0.967 0.0015 286.4);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.967 0.0015 286.4);
+  --muted-foreground: oklch(0.505 0.014 285.9);
+  --accent: oklch(0.96 0.003 286.4);
+  --accent-foreground: oklch(0.21 0.006 285.885);
+  --destructive: oklch(0.583 0.222 27.2);
+
+  --border: oklch(0 0 0 / 10%);
+  --input: oklch(0.928 0.004 286.3);
+  --ring: oklch(0.58 0.135 80);
+
+  --chart-1: oklch(0.58 0.135 80);
+  --chart-2: oklch(0.55 0.12 70);
+  --chart-3: oklch(0.5 0.13 58);
+  --chart-4: oklch(0.6 0.11 49);
+  --chart-5: oklch(0.47 0.12 46);
+
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.21 0.006 285.885);
+  --sidebar-primary: oklch(0.58 0.135 80);
+  --sidebar-primary-foreground: oklch(0.985 0.015 95);
+  --sidebar-accent: oklch(0.96 0.003 286.4);
+  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
+  --sidebar-border: oklch(0 0 0 / 10%);
+  --sidebar-ring: oklch(0.58 0.135 80);
+}
+
+.dark {
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.21 0.006 285.885);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.21 0.006 285.885);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.9089 0.1361 99.99);
+  --primary-foreground: oklch(0.28 0.07 46);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.705 0.015 286.067);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(0.21 0.006 285.885);
+  --ring: oklch(0.552 0.016 285.938);
+  --chart-1: oklch(0.88 0.15 92);
+  --chart-2: oklch(0.9089 0.1361 99.99);
+  --chart-3: oklch(0.67 0.16 58);
+  --chart-4: oklch(0.56 0.15 49);
+  --chart-5: oklch(0.47 0.12 46);
+  --sidebar: oklch(0.21 0.006 285.885);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.9089 0.1361 99.99);
+  --sidebar-primary-foreground: oklch(0.28 0.07 46);
+  --sidebar-accent: oklch(0.274 0.006 286.033);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.552 0.016 285.938);
+}
+
+@theme inline {
+  --breakpoint-3xl: 2000px;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-50: oklch(0.9961 0.008 98.87);
+  --color-primary-100: oklch(0.9896 0.0146 98.28);
+  --color-primary-200: oklch(0.9755 0.0382 99.02);
+  --color-primary-300: oklch(0.9516 0.0736 100.12);
+  --color-primary-400: oklch(0.9295 0.1076 100.17);
+  --color-primary-500: oklch(0.9089 0.1361 99.99);
+  --color-primary-600: oklch(0.7322 0.1077 100.11);
+  --color-primary-700: oklch(0.5449 0.0783 99.54);
+  --color-primary-800: oklch(0.341 0.0455 101.51);
+  --color-primary-900: oklch(0.2031 0.0222 99.94);
+  --color-primary-950: oklch(0.1623 0.0145 101.27);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  /* Pointer-driven game NUI: suppress the browser focus outline everywhere —
+     keyboard/Tab focus otherwise draws a ring-colored border around the
+     focused control (e.g. phone tab-bar items, dashboard buttons). */
+  :focus,
+  :focus-visible {
+    outline: none;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-mini::-webkit-scrollbar {
+  position: absolute;
+  height: 4px;
+  width: 4px;
+  border-radius: 10px;
+  background-color: #ffffff10;
+}
+
+.scrollbar-mini::-webkit-scrollbar-thumb {
+  background-color: #ffffff66;
+  border-radius: 10px;
+}
+
+.scrollbar-mini::-webkit-scrollbar-thumb:hover {
+  background-color: #ffffffb3;
+}
+
+.scrollbar-mini-absolute {
+  overflow-y: scroll !important;
+  overflow-y: overlay !important;
+  scrollbar-gutter: stable;
+}

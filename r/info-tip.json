@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "info-tip",
+  "title": "Info Tip",
+  "description": "Info Tip component.",
+  "registryDependencies": [
+    "@9am/tooltip",
+    "@9am/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/ui/info-tip.tsx",
+      "content": "import * as React from \"react\";\nimport { Tooltip, TooltipContent, TooltipTrigger } from \"@/components/ui/tooltip\";\nimport { cn } from \"@/lib/utils\";\n\ntype TooltipSide = \"top\" | \"right\" | \"bottom\" | \"left\";\n\n/** Small \"?\" icon that reveals an explanatory tooltip on hover. */\nexport function InfoTip({\n    children,\n    side = \"top\",\n    className,\n}: {\n    children: React.ReactNode;\n    side?: TooltipSide;\n    className?: string;\n}) {\n    return (\n        <Tooltip>\n            <TooltipTrigger asChild>\n                <span\n                    className={cn(\n                        \"inline-flex items-center justify-center shrink-0 text-muted-foreground/50 hover:text-muted-foreground transition-colors cursor-help\",\n                        className\n                    )}\n                >\n                    <svg\n                        xmlns=\"http://www.w3.org/2000/svg\"\n                        width={13}\n                        height={13}\n                        viewBox=\"0 0 24 24\"\n                        fill=\"none\"\n                        stroke=\"currentColor\"\n                        strokeWidth={2}\n                        strokeLinecap=\"round\"\n                        strokeLinejoin=\"round\"\n                    >\n                        <circle cx=\"12\" cy=\"12\" r=\"10\" />\n                        <path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\" />\n                        <path d=\"M12 17h.01\" />\n                    </svg>\n                </span>\n            </TooltipTrigger>\n            <TooltipContent side={side} sideOffset={6} className=\"max-w-[260px] leading-relaxed\">\n                {children}\n            </TooltipContent>\n        </Tooltip>\n    );\n}\n\n/**\n * Hover tooltip around an interactive element (button, switch, badge).\n * Note: disabled buttons swallow pointer events — wrap them in a span first.\n */\nexport function Tip({\n    label,\n    side = \"top\",\n    children,\n}: {\n    label: React.ReactNode;\n    side?: TooltipSide;\n    children: React.ReactNode;\n}) {\n    return (\n        <Tooltip>\n            <TooltipTrigger asChild>{children}</TooltipTrigger>\n            <TooltipContent side={side} sideOffset={6} className=\"max-w-[240px] leading-relaxed\">\n                {label}\n            </TooltipContent>\n        </Tooltip>\n    );\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

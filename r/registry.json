@@ -1,0 +1,1419 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "9am",
+  "homepage": "https://github.com/ilovehugetits/9am-ui",
+  "items": [
+    {
+      "name": "theme",
+      "type": "registry:file",
+      "title": "9AM Theme",
+      "description": "The 9AM design language: OKLCH token set for both palettes, the primary-50..950 ramp, radius scale, class-driven dark variant, embedded Poppins/Phudu fonts and the NUI base rules. Locked — `9am-ui check` fails on drift.",
+      "dependencies": [
+        "tailwindcss@^4.3.3",
+        "tw-animate-css@^1.4.0"
+      ],
+      "files": [
+        {
+          "path": "registry/theme/9am-theme.css",
+          "type": "registry:file",
+          "target": "src/styles/9am-theme.css"
+        },
+        {
+          "path": "registry/theme/9am-fonts.css",
+          "type": "registry:file",
+          "target": "src/styles/9am-fonts.css"
+        }
+      ]
+    },
+    {
+      "name": "utils",
+      "type": "registry:lib",
+      "title": "cn()",
+      "description": "The cn() class merger every component uses.",
+      "dependencies": [
+        "clsx@^2.1.1",
+        "tailwind-merge@^3.6.0"
+      ],
+      "files": [
+        {
+          "path": "registry/lib/utils.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "smooth-scroll",
+      "type": "registry:lib",
+      "title": "Smooth Scroll (CEF fix)",
+      "description": "Global wheel-scroll handler. Repairs scrolling in FiveM CEF (Chromium 103 will not wheel-scroll clip-path'd containers) and gives every scroller the same eased feel.",
+      "files": [
+        {
+          "path": "registry/lib/smooth-scroll.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "nui",
+      "type": "registry:file",
+      "title": "NUI Bridge",
+      "description": "fetchNui, useNuiEvent, debugData, isEnvBrowser and the per-script nui.config.ts.",
+      "files": [
+        {
+          "path": "registry/nui/nui.config.ts",
+          "type": "registry:file",
+          "target": "src/nui.config.ts"
+        },
+        {
+          "path": "registry/nui/misc.ts",
+          "type": "registry:file",
+          "target": "src/utils/misc.ts"
+        },
+        {
+          "path": "registry/nui/fetchNui.ts",
+          "type": "registry:file",
+          "target": "src/utils/fetchNui.ts"
+        },
+        {
+          "path": "registry/nui/debugData.ts",
+          "type": "registry:file",
+          "target": "src/utils/debugData.ts"
+        },
+        {
+          "path": "registry/nui/useNuiEvent.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "registry/nui/vite-env.d.ts",
+          "type": "registry:file",
+          "target": "src/vite-env.d.ts"
+        }
+      ]
+    },
+    {
+      "name": "use-theme",
+      "type": "registry:file",
+      "title": "Theme Hook",
+      "description": "Light/dark store that reflects onto <html> and persists per script.",
+      "dependencies": [
+        "zustand@^5.0.14"
+      ],
+      "registryDependencies": [
+        "@9am/nui"
+      ],
+      "files": [
+        {
+          "path": "registry/nui/useTheme.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "visibility",
+      "type": "registry:file",
+      "title": "Visibility Provider",
+      "description": "NUI frame visibility with ESC handling and focus release.",
+      "dependencies": [
+        "zustand@^5.0.14"
+      ],
+      "registryDependencies": [
+        "@9am/nui"
+      ],
+      "files": [
+        {
+          "path": "registry/nui/VisibilityProvider.tsx",
+          "type": "registry:file",
+          "target": "src/providers/VisibilityProvider.tsx"
+        }
+      ]
+    },
+    {
+      "name": "i18n",
+      "type": "registry:file",
+      "title": "Runtime i18n",
+      "description": "Runtime dictionary pulled from Lua via the getLocale callback, with English fallbacks for the kit's own strings.",
+      "dependencies": [
+        "zustand@^5.0.14"
+      ],
+      "registryDependencies": [
+        "@9am/nui"
+      ],
+      "files": [
+        {
+          "path": "registry/i18n/index.ts",
+          "type": "registry:file",
+          "target": "src/i18n/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "Button component.",
+      "dependencies": [
+        "@radix-ui/react-slot@^1.3.1",
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/button.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "Calendar",
+      "description": "Calendar component.",
+      "dependencies": [
+        "react-day-picker@^10.0.1"
+      ],
+      "registryDependencies": [
+        "@9am/button",
+        "@9am/icon-chevron-down",
+        "@9am/icon-chevron-left",
+        "@9am/icon-chevron-right",
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/calendar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "Card",
+      "description": "Card component.",
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "chart",
+      "type": "registry:ui",
+      "title": "Chart",
+      "description": "Chart component.",
+      "dependencies": [
+        "recharts@^3.10.0"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/chart.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "data-table",
+      "type": "registry:ui",
+      "title": "Data Table",
+      "description": "Data Table component.",
+      "dependencies": [
+        "@tanstack/react-table@^8.21.3"
+      ],
+      "registryDependencies": [
+        "@9am/button",
+        "@9am/i18n",
+        "@9am/icon-chevron-left",
+        "@9am/icon-chevron-right",
+        "@9am/icon-search",
+        "@9am/input",
+        "@9am/table"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/data-table.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "Dialog component.",
+      "dependencies": [
+        "@radix-ui/react-dialog@^1.1.21"
+      ],
+      "registryDependencies": [
+        "@9am/i18n",
+        "@9am/icon-x",
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/dialog.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "field",
+      "type": "registry:ui",
+      "title": "Field",
+      "description": "Field component.",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "@9am/label",
+        "@9am/separator",
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/field.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "info-tip",
+      "type": "registry:ui",
+      "title": "Info Tip",
+      "description": "Info Tip component.",
+      "registryDependencies": [
+        "@9am/tooltip",
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/info-tip.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "Input component.",
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/input.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "title": "Label",
+      "description": "Label component.",
+      "dependencies": [
+        "@radix-ui/react-label@^2.1.13"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/label.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "multi-select",
+      "type": "registry:ui",
+      "title": "Multi Select",
+      "description": "Multi Select component.",
+      "dependencies": [
+        "@radix-ui/react-popover@^1.1.21"
+      ],
+      "registryDependencies": [
+        "@9am/button",
+        "@9am/i18n",
+        "@9am/icon-check",
+        "@9am/icon-chevron-down",
+        "@9am/icon-search",
+        "@9am/icon-x",
+        "@9am/input",
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/multi-select.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "Popover component.",
+      "dependencies": [
+        "@radix-ui/react-popover@^1.1.21"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/popover.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "Select component.",
+      "dependencies": [
+        "@radix-ui/react-select@^2.3.5"
+      ],
+      "registryDependencies": [
+        "@9am/icon-check",
+        "@9am/icon-chevron-down",
+        "@9am/icon-chevron-up",
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/select.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "title": "Separator",
+      "description": "Separator component.",
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/separator.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "Switch",
+      "description": "Switch component.",
+      "dependencies": [
+        "@radix-ui/react-switch@^1.3.5"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/switch.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "Table",
+      "description": "Table component.",
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/table.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "Tabs component.",
+      "dependencies": [
+        "@radix-ui/react-tabs@^1.1.19",
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/tabs.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "description": "Tooltip component.",
+      "dependencies": [
+        "@radix-ui/react-tooltip@^1.2.14"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/tooltip.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "viewport",
+      "type": "registry:ui",
+      "title": "Viewport",
+      "description": "The 9AM scroll container: drag-able custom scrollbar, layered liquid-glass edges, and a header that blur-swaps to a sticky copy on scroll. Contains the CEF-103 compositing workarounds.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/viewport.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-arrow-left",
+      "type": "registry:ui",
+      "title": "Arrow Left",
+      "description": "Animated Arrow Left icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/arrow-left.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-arrow-right",
+      "type": "registry:ui",
+      "title": "Arrow Right",
+      "description": "Animated Arrow Right icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/arrow-right.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-badge-percent",
+      "type": "registry:ui",
+      "title": "Badge Percent",
+      "description": "Animated Badge Percent icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/badge-percent.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-box",
+      "type": "registry:ui",
+      "title": "Box",
+      "description": "Animated Box icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/box.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-boxes",
+      "type": "registry:ui",
+      "title": "Boxes",
+      "description": "Animated Boxes icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/boxes.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-calendar-days",
+      "type": "registry:ui",
+      "title": "Calendar Days",
+      "description": "Animated Calendar Days icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/calendar-days.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-cart",
+      "type": "registry:ui",
+      "title": "Cart",
+      "description": "Animated Cart icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/cart.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-chart-column-increasing",
+      "type": "registry:ui",
+      "title": "Chart Column Increasing",
+      "description": "Animated Chart Column Increasing icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/chart-column-increasing.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-check",
+      "type": "registry:ui",
+      "title": "Check",
+      "description": "Animated Check icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/check.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-chevron-down",
+      "type": "registry:ui",
+      "title": "Chevron Down",
+      "description": "Animated Chevron Down icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/chevron-down.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-chevron-left",
+      "type": "registry:ui",
+      "title": "Chevron Left",
+      "description": "Animated Chevron Left icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/chevron-left.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-chevron-right",
+      "type": "registry:ui",
+      "title": "Chevron Right",
+      "description": "Animated Chevron Right icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/chevron-right.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-chevron-up",
+      "type": "registry:ui",
+      "title": "Chevron Up",
+      "description": "Animated Chevron Up icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/chevron-up.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-circle-check",
+      "type": "registry:ui",
+      "title": "Circle Check",
+      "description": "Animated Circle Check icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/circle-check.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-circle-dollar-sign",
+      "type": "registry:ui",
+      "title": "Circle Dollar Sign",
+      "description": "Animated Circle Dollar Sign icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/circle-dollar-sign.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-clock",
+      "type": "registry:ui",
+      "title": "Clock",
+      "description": "Animated Clock icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/clock.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-credit-card",
+      "type": "registry:ui",
+      "title": "Credit Card",
+      "description": "Animated Credit Card icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/credit-card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-delete",
+      "type": "registry:ui",
+      "title": "Delete",
+      "description": "Animated Delete icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/delete.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-dollar-sign",
+      "type": "registry:ui",
+      "title": "Dollar Sign",
+      "description": "Animated Dollar Sign icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/dollar-sign.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-droplet",
+      "type": "registry:ui",
+      "title": "Droplet",
+      "description": "Animated Droplet icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/droplet.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-folder-open",
+      "type": "registry:ui",
+      "title": "Folder Open",
+      "description": "Animated Folder Open icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/folder-open.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-grip",
+      "type": "registry:ui",
+      "title": "Grip",
+      "description": "Animated Grip icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/grip.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-hand-coins",
+      "type": "registry:ui",
+      "title": "Hand Coins",
+      "description": "Animated Hand Coins icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/hand-coins.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-hand-helping",
+      "type": "registry:ui",
+      "title": "Hand Helping",
+      "description": "Animated Hand Helping icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/hand-helping.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-hard-drive-download",
+      "type": "registry:ui",
+      "title": "Hard Drive Download",
+      "description": "Animated Hard Drive Download icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/hard-drive-download.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-layout-grid",
+      "type": "registry:ui",
+      "title": "Layout Grid",
+      "description": "Animated Layout Grid icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/layout-grid.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-loader-circle",
+      "type": "registry:ui",
+      "title": "Loader Circle",
+      "description": "Animated Loader Circle icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/loader-circle.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-map-pin",
+      "type": "registry:ui",
+      "title": "Map Pin",
+      "description": "Animated Map Pin icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/map-pin.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-menu",
+      "type": "registry:ui",
+      "title": "Menu",
+      "description": "Animated Menu icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-plus",
+      "type": "registry:ui",
+      "title": "Plus",
+      "description": "Animated Plus icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/plus.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-receipt",
+      "type": "registry:ui",
+      "title": "Receipt",
+      "description": "Animated Receipt icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/receipt.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-refresh-cw",
+      "type": "registry:ui",
+      "title": "Refresh Cw",
+      "description": "Animated Refresh Cw icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/refresh-cw.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-route",
+      "type": "registry:ui",
+      "title": "Route",
+      "description": "Animated Route icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/route.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-search",
+      "type": "registry:ui",
+      "title": "Search",
+      "description": "Animated Search icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/search.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-send",
+      "type": "registry:ui",
+      "title": "Send",
+      "description": "Animated Send icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/send.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-settings",
+      "type": "registry:ui",
+      "title": "Settings",
+      "description": "Animated Settings icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/settings.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-square-pen",
+      "type": "registry:ui",
+      "title": "Square Pen",
+      "description": "Animated Square Pen icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/square-pen.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-theme-toggle",
+      "type": "registry:ui",
+      "title": "Theme Toggle",
+      "description": "Animated Theme Toggle icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/use-theme",
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/theme-toggle.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-trending-down",
+      "type": "registry:ui",
+      "title": "Trending Down",
+      "description": "Animated Trending Down icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/trending-down.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-trending-up",
+      "type": "registry:ui",
+      "title": "Trending Up",
+      "description": "Animated Trending Up icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/trending-up.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-truck",
+      "type": "registry:ui",
+      "title": "Truck",
+      "description": "Animated Truck icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/truck.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-user-round-plus",
+      "type": "registry:ui",
+      "title": "User Round Plus",
+      "description": "Animated User Round Plus icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/user-round-plus.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-user-round-x",
+      "type": "registry:ui",
+      "title": "User Round X",
+      "description": "Animated User Round X icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/user-round-x.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-user",
+      "type": "registry:ui",
+      "title": "User",
+      "description": "Animated User icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/user.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-users",
+      "type": "registry:ui",
+      "title": "Users",
+      "description": "Animated Users icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/users.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-wallet",
+      "type": "registry:ui",
+      "title": "Wallet",
+      "description": "Animated Wallet icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/wallet.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-x",
+      "type": "registry:ui",
+      "title": "X",
+      "description": "Animated X icon.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/icons/x.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "scaffold",
+      "type": "registry:file",
+      "title": "Script Scaffold",
+      "description": "New-script web skeleton: vite/tsconfig/eslint/postcss (including the oklch conversion CEF requires), index.html, main.tsx and a starter App. Run `bunx 9am-ui lua` afterwards for the Lua half (NUI bridge, locale module, fxmanifest).",
+      "dependencies": [
+        "@tailwindcss/vite@^4.3.3",
+        "tailwindcss@^4.3.3",
+        "tw-animate-css@^1.4.0"
+      ],
+      "registryDependencies": [
+        "@9am/theme",
+        "@9am/nui",
+        "@9am/i18n",
+        "@9am/visibility",
+        "@9am/use-theme",
+        "@9am/utils",
+        "@9am/smooth-scroll",
+        "@9am/viewport",
+        "@9am/button",
+        "@9am/icon-x",
+        "@9am/icon-theme-toggle"
+      ],
+      "files": [
+        {
+          "path": "registry/scaffold/web/index.html",
+          "type": "registry:file",
+          "target": "index.html"
+        },
+        {
+          "path": "registry/scaffold/web/index.css",
+          "type": "registry:file",
+          "target": "src/index.css"
+        },
+        {
+          "path": "registry/scaffold/web/main.tsx",
+          "type": "registry:file",
+          "target": "src/main.tsx"
+        },
+        {
+          "path": "registry/scaffold/web/App.tsx",
+          "type": "registry:file",
+          "target": "src/components/App.tsx"
+        },
+        {
+          "path": "registry/scaffold/web/vite.config.ts",
+          "type": "registry:file",
+          "target": "vite.config.ts"
+        },
+        {
+          "path": "registry/scaffold/web/postcss.config.js",
+          "type": "registry:file",
+          "target": "postcss.config.js"
+        },
+        {
+          "path": "registry/scaffold/web/eslint.config.js",
+          "type": "registry:file",
+          "target": "eslint.config.js"
+        },
+        {
+          "path": "registry/scaffold/web/tsconfig.json",
+          "type": "registry:file",
+          "target": "tsconfig.json"
+        },
+        {
+          "path": "registry/scaffold/web/tsconfig.node.json",
+          "type": "registry:file",
+          "target": "tsconfig.node.json"
+        }
+      ]
+    }
+  ]
+}

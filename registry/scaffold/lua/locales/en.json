@@ -1,0 +1,24 @@
+{
+  "game": {
+    "error": {
+      "noAccess": "You don't have access to this."
+    }
+  },
+  "ui": {
+    "common": {
+      "close": "Close",
+      "searchPlaceholder": "Search...",
+      "noResults": "No results.",
+      "noResultsFound": "No results found",
+      "selectPlaceholder": "Select...",
+      "nSelected": "{count} selected",
+      "rowCount": "{count} row(s)",
+      "pageOf": "Page {page} of {total}"
+    },
+    "app": {
+      "title": "9AM Script",
+      "subtitle": "Scaffolded with the 9AM UI kit.",
+      "placeholder": "Replace src/components/App.tsx with your interface."
+    }
+  }
+}

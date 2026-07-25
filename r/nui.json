@@ -1,0 +1,44 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "nui",
+  "title": "NUI Bridge",
+  "description": "fetchNui, useNuiEvent, debugData, isEnvBrowser and the per-script nui.config.ts.",
+  "files": [
+    {
+      "path": "registry/nui/nui.config.ts",
+      "content": "/**\n * Per-script configuration for the 9AM NUI layer.\n *\n * This is the ONE kit file you are expected to edit after installing.\n * `bunx 9am-ui check` deliberately skips it — everything else should stay as\n * shipped so fixes keep flowing down from the registry.\n */\nexport const nuiConfig = {\n  /**\n   * Resource name used to build the `https://<resource>/<callback>` URL.\n   *\n   * In CEF this is read from `window.GetParentResourceName()` and this value is\n   * never touched; it only applies when the app runs as a plain browser page\n   * (`bun run start`), where it just needs to be something recognisable in the\n   * network tab.\n   */\n  resourceName: \"9am-script\",\n\n  /** localStorage key the theme toggle persists to. Namespaced per script so\n   *  two 9AM NUIs open in the same CEF context can't stomp each other. */\n  themeStorageKey: \"9am-script:theme\",\n\n  /** Theme used on first run, before the player has toggled anything. */\n  defaultTheme: \"dark\" as \"light\" | \"dark\",\n} as const;\n",
+      "type": "registry:file",
+      "target": "src/nui.config.ts"
+    },
+    {
+      "path": "registry/nui/misc.ts",
+      "content": "// Will return whether the current environment is in a regular browser\r\n// and not CEF\r\nexport const isEnvBrowser = (): boolean => !window.invokeNative;\r\n\r\n\r\n// Basic no operation function\r\nexport const noop = () => {};\r\n",
+      "type": "registry:file",
+      "target": "src/utils/misc.ts"
+    },
+    {
+      "path": "registry/nui/fetchNui.ts",
+      "content": "import { isEnvBrowser } from \"@/utils/misc\";\r\nimport { nuiConfig } from \"@/nui.config\";\r\n\r\n/**\r\n * Simple wrapper around fetch API tailored for CEF/NUI use. This abstraction\r\n * can be extended to include AbortController if needed or if the response isn't\r\n * JSON. Tailor it to your needs.\r\n *\r\n * @param eventName - The endpoint eventname to target\r\n * @param data - Data you wish to send in the NUI Callback\r\n * @param mockData - Mock data to be returned if in the browser\r\n *\r\n * @return returnData - A promise for the data sent back by the NuiCallbacks CB argument\r\n */\r\n\r\nexport async function fetchNui<T = unknown>(\r\n  eventName: string,\r\n  data?: unknown,\r\n  mockData?: T,\r\n): Promise<T> {\r\n  const options = {\r\n    method: \"post\",\r\n    headers: {\r\n      \"Content-Type\": \"application/json; charset=UTF-8\",\r\n    },\r\n    body: JSON.stringify(data),\r\n    signal: AbortSignal.timeout(10000),\r\n  };\r\n\r\n  if (isEnvBrowser() && mockData) return mockData;\r\n\r\n  const resourceName = window.GetParentResourceName\r\n    ? window.GetParentResourceName()\r\n    : nuiConfig.resourceName;\r\n\r\n  try {\r\n    const resp = await fetch(`https://${resourceName}/${eventName}`, options);\r\n\r\n    const respFormatted = await resp.json();\r\n\r\n    return respFormatted;\r\n  } catch (error) {\r\n    console.error(`fetchNui: request \"${eventName}\" failed:`, error);\r\n    // Safe fallback so awaiting call sites never hang or reject uncaught:\r\n    // array consumers get an empty-compatible array, everyone else gets a failure result.\r\n    if (Array.isArray(mockData)) return mockData;\r\n    return { success: false, message: \"Request failed\" } as unknown as T;\r\n  }\r\n}\r\n",
+      "type": "registry:file",
+      "target": "src/utils/fetchNui.ts"
+    },
+    {
+      "path": "registry/nui/debugData.ts",
+      "content": "import { isEnvBrowser } from \"./misc\";\r\n\r\ninterface DebugEvent<T = unknown> {\r\n  action: string;\r\n  data: T;\r\n}\r\n\r\n/**\r\n * Emulates dispatching an event using SendNuiMessage in the lua scripts.\r\n * This is used when developing in browser\r\n *\r\n * @param events - The event you want to cover\r\n * @param timer - How long until it should trigger (ms)\r\n */\r\nexport const debugData = <P>(events: DebugEvent<P>[], timer = 50): void => {\r\n  if (import.meta.env.MODE === \"development\" && isEnvBrowser()) {\r\n    for (const event of events) {\r\n      setTimeout(() => {\r\n        window.dispatchEvent(\r\n          new MessageEvent(\"message\", {\r\n            data: {\r\n              action: event.action,\r\n              data: event.data,\r\n            },\r\n          }),\r\n        );\r\n      }, timer);\r\n    }\r\n  }\r\n};\r\n",
+      "type": "registry:file",
+      "target": "src/utils/debugData.ts"
+    },
+    {
+      "path": "registry/nui/useNuiEvent.ts",
+      "content": "import { MutableRefObject, useEffect, useRef } from \"react\";\r\nimport { noop } from \"@/utils/misc\";\r\n\r\ninterface NuiMessageData<T = unknown> {\r\n  action: string;\r\n  data: T;\r\n}\r\n\r\ntype NuiHandlerSignature<T> = (data: T) => void;\r\n\r\n/**\r\n * A hook that manage events listeners for receiving data from the client scripts\r\n * @param action The specific `action` that should be listened for.\r\n * @param handler The callback function that will handle data relayed by this hook\r\n *\r\n * @example\r\n * useNuiEvent<{visibility: true, wasVisible: 'something'}>('setVisible', (data) => {\r\n *   // whatever logic you want\r\n * })\r\n *\r\n **/\r\n\r\nexport const useNuiEvent = <T = unknown>(\r\n  action: string,\r\n  handler: (data: T) => void,\r\n) => {\r\n  const savedHandler: MutableRefObject<NuiHandlerSignature<T>> = useRef(noop);\r\n\r\n  // Make sure we handle for a reactive handler\r\n  useEffect(() => {\r\n    savedHandler.current = handler;\r\n  }, [handler]);\r\n\r\n  useEffect(() => {\r\n    const eventListener = (event: MessageEvent<NuiMessageData<T>>) => {\r\n      if (!event.data || typeof event.data !== \"object\") return;\r\n      const { action: eventAction, data } = event.data;\r\n\r\n      if (savedHandler.current) {\r\n        if (eventAction === action) {\r\n          savedHandler.current(data);\r\n        }\r\n      }\r\n    };\r\n\r\n    window.addEventListener(\"message\", eventListener);\r\n    // Remove Event Listener on component cleanup\r\n    return () => window.removeEventListener(\"message\", eventListener);\r\n  }, [action]);\r\n};\r\n",
+      "type": "registry:hook"
+    },
+    {
+      "path": "registry/nui/vite-env.d.ts",
+      "content": "/// <reference types=\"vite/client\" />\n\nexport {}\n\n// FiveM NUI globals injected by the CEF host. Optional because the app also\n// runs as a plain browser page (bun run start) where neither is defined.\ndeclare global {\n  interface Window {\n    invokeNative?: (...args: unknown[]) => void\n    GetParentResourceName?: () => string\n  }\n\n  /** Compile-time flag from vite.config.ts `define`: true everywhere except\n   *  `bun run production-build`, where dev-seed/mock-data paths are stripped. */\n  const __DEV_SEED__: boolean\n}\n",
+      "type": "registry:file",
+      "target": "src/vite-env.d.ts"
+    }
+  ],
+  "type": "registry:file"
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button",
+  "title": "Button",
+  "description": "Button component.",
+  "dependencies": [
+    "@radix-ui/react-slot@^1.3.1",
+    "class-variance-authority@^0.7.1"
+  ],
+  "registryDependencies": [
+    "@9am/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/ui/button.tsx",
+      "content": "import * as React from \"react\"\r\nimport { Slot } from \"@radix-ui/react-slot\"\r\nimport { cva, type VariantProps } from \"class-variance-authority\"\r\n\r\nimport { cn } from \"@/lib/utils\"\r\n\r\nconst buttonVariants = cva(\r\n  \"inline-flex cursor-pointer select-none items-center justify-center gap-2 whitespace-nowrap rounded-[4px] text-sm font-medium transition-all active:scale-95 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive\",\r\n  {\r\n    variants: {\r\n      variant: {\r\n        default:\r\n          \"bg-primary text-primary-foreground! dark:text-background! shadow-xs hover:bg-primary/90\",\r\n        default2:\r\n          \"bg-black/[0.05] dark:bg-white/10 text-foreground hover:bg-[#F6E3711a] hover:text-primary\",\r\n        destructive:\r\n          \"bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60\",\r\n        outline:\r\n          \"border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground bg-input/30 dark:border-input dark:hover:bg-input/50\",\r\n        secondary:\r\n          \"bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80\",\r\n        ghost: \"!hover:bg-opacity-20\",\r\n        link: \"text-primary hover:bg-[#F6E3711a]\",\r\n        navigation: \"h-9! px-4! bg-black/[0.05] dark:bg-white/10 text-foreground hover:bg-primary hover:text-primary-foreground dark:hover:text-background  !font-[phudu] text-base\",\r\n      },\r\n      size: {\r\n        default: \"h-9 px-4 rounded-lg py-2 has-[>svg]:px-3\",\r\n        sm: \"h-8 rounded-lg gap-1.5 px-3 has-[>svg]:px-2.5\",\r\n        lg: \"h-10 rounded-xl px-6 has-[>svg]:px-4 \",\r\n        icon: \"size-9\",\r\n        catalogNav: \"h-9 px-4 py-2 has-[>svg]:px-3 rounded-lg\"\r\n      },\r\n    },\r\n    defaultVariants: {\r\n      variant: \"default\",\r\n      size: \"default\",\r\n    },\r\n  }\r\n)\r\n\r\nfunction Button({\r\n  className,\r\n  variant,\r\n  size,\r\n  asChild = false,\r\n  ...props\r\n}: React.ComponentProps<\"button\"> &\r\n  VariantProps<typeof buttonVariants> & {\r\n    asChild?: boolean\r\n  }) {\r\n  const Comp = asChild ? Slot : \"button\"\r\n\r\n  return (\r\n    <Comp\r\n      data-slot=\"button\"\r\n      className={cn(buttonVariants({ variant, size, className }))}\r\n      {...props}\r\n    />\r\n  )\r\n}\r\n\r\nexport { Button, buttonVariants }\r\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}
