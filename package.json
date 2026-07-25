@@ -10,7 +10,8 @@
   "files": [
     "cli",
     "r",
-    "registry"
+    "registry",
+    "scripts"
   ],
   "scripts": {
     "fonts": "bun scripts/build-fonts.ts",
