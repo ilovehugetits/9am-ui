@@ -146,7 +146,8 @@ items.push({
   type: "registry:file",
   title: TITLES.tools,
   description: DESCRIPTIONS.tools,
-  files: [{ path: "registry/tools/9am-ui.mjs", type: "registry:file", target: "scripts/9am-ui.mjs" }],
+  // "~/" is shadcn's project-root escape; a bare path resolves under src/.
+  files: [{ path: "registry/tools/9am-ui.mjs", type: "registry:file", target: "~/scripts/9am-ui.mjs" }],
 });
 
 // ---- lib ------------------------------------------------------------------

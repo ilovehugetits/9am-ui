@@ -42,7 +42,7 @@
         {
           "path": "registry/tools/9am-ui.mjs",
           "type": "registry:file",
-          "target": "scripts/9am-ui.mjs"
+          "target": "~/scripts/9am-ui.mjs"
         }
       ]
     },
