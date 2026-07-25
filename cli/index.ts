@@ -33,6 +33,9 @@ const EDITABLE = new Set(["src/nui.config.ts"]);
  *  writes is meant to be rewritten by the script that installed it. */
 const UNMANAGED_ITEMS = new Set(["scaffold"]);
 
+/** Drift here is a hard failure — these carry the shared visual identity. */
+const LOCKED_ITEMS = new Set(["theme", "fonts"]);
+
 /** Line endings are not drift: git checkouts differ across machines. */
 const norm = (s: string) => s.replace(/\r\n/g, "\n").replace(/\s+$/, "");
 
@@ -112,7 +115,7 @@ function check(dir: string): never {
       if (!fs.existsSync(abs)) continue; // not installed — not this command's business
       installed++;
       if (norm(fs.readFileSync(abs, "utf8")) === norm(file.content)) continue;
-      (item.name === "theme" ? themeDrift : drift).push(`${rel}  ${DIM}(@9am/${item.name})${RST}`);
+      (LOCKED_ITEMS.has(item.name) ? themeDrift : drift).push(`${rel}  ${DIM}(@9am/${item.name})${RST}`);
     }
   }
 

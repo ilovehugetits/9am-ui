@@ -10,6 +10,7 @@
   ],
   "registryDependencies": [
     "@9am/theme",
+    "@9am/fonts",
     "@9am/nui",
     "@9am/i18n",
     "@9am/visibility",

@@ -67,6 +67,7 @@ function scan(file: string) {
 
 const TITLES: Record<string, string> = {
   theme: "9AM Theme",
+  fonts: "9AM Fonts (embedded)",
   nui: "NUI Bridge",
   i18n: "Runtime i18n",
   visibility: "Visibility Provider",
@@ -79,7 +80,9 @@ const TITLES: Record<string, string> = {
 
 const DESCRIPTIONS: Record<string, string> = {
   theme:
-    "The 9AM design language: OKLCH token set for both palettes, the primary-50..950 ramp, radius scale, class-driven dark variant, embedded Poppins/Phudu fonts and the NUI base rules. Locked — `9am-ui check` fails on drift.",
+    "The 9AM design language: OKLCH token set for both palettes, the primary-50..950 ramp, radius scale, class-driven dark variant and the NUI base rules. Locked — `9am-ui check` fails on drift. Pair with @9am/fonts.",
+  fonts:
+    "Poppins + Phudu embedded as base64, so the theme installs with nothing else to fetch. Apps with several html entry points (DUI pages especially) should use `bunx 9am-ui fonts` for the linked variant instead.",
   nui: "fetchNui, useNuiEvent, debugData, isEnvBrowser and the per-script nui.config.ts.",
   i18n: "Runtime dictionary pulled from Lua via the getLocale callback, with English fallbacks for the kit's own strings.",
   visibility: "NUI frame visibility with ESC handling and focus release.",
@@ -116,10 +119,19 @@ items.push({
   title: TITLES.theme,
   description: DESCRIPTIONS.theme,
   dependencies: [`tailwindcss@${VERSIONS.tailwindcss}`, `tw-animate-css@${VERSIONS["tw-animate-css"]}`],
-  files: [
-    { path: "registry/theme/9am-theme.css", type: "registry:file", target: "src/styles/9am-theme.css" },
-    { path: "registry/theme/9am-fonts.css", type: "registry:file", target: "src/styles/9am-fonts.css" },
-  ],
+  files: [{ path: "registry/theme/9am-theme.css", type: "registry:file", target: "src/styles/9am-theme.css" }],
+});
+
+// Separate from the theme on purpose: 9am-theme.css does not import a font
+// stylesheet, because which one you want is a per-app decision (base64 here,
+// or the linked variant from `9am-ui fonts` for multi-entry apps). Bundling
+// these into @9am/theme would push 322 KB onto consumers that don't use them.
+items.push({
+  name: "fonts",
+  type: "registry:file",
+  title: TITLES.fonts,
+  description: DESCRIPTIONS.fonts,
+  files: [{ path: "registry/theme/9am-fonts.css", type: "registry:file", target: "src/styles/9am-fonts.css" }],
 });
 
 // ---- lib ------------------------------------------------------------------
@@ -221,7 +233,7 @@ items.push({
     `tailwindcss@${VERSIONS.tailwindcss}`,
     `tw-animate-css@${VERSIONS["tw-animate-css"]}`,
   ],
-  registryDependencies: ["@9am/theme", "@9am/nui", "@9am/i18n", "@9am/visibility", "@9am/use-theme", "@9am/utils", "@9am/smooth-scroll", "@9am/viewport", "@9am/button", "@9am/icon-x", "@9am/icon-theme-toggle"],
+  registryDependencies: ["@9am/theme", "@9am/fonts", "@9am/nui", "@9am/i18n", "@9am/visibility", "@9am/use-theme", "@9am/utils", "@9am/smooth-scroll", "@9am/viewport", "@9am/button", "@9am/icon-x", "@9am/icon-theme-toggle"],
   files: SCAFFOLD,
 });
 

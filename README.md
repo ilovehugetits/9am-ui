@@ -12,7 +12,8 @@ Extracted from `9am-vehicleshop` v1.2.8, which is consumer #0.
 
 | Layer | Items | What it gives you |
 |---|---|---|
-| **Theme** | `@9am/theme` | OKLCH tokens for both palettes, the `primary-50…950` ramp, radius scale, class-driven `dark:` variant, Poppins + Phudu embedded as base64, and the NUI base rules (transparent body, suppressed focus rings, scrollbar utilities). **Locked** — see [Drift policy](#drift-policy). |
+| **Theme** | `@9am/theme` | OKLCH tokens for both palettes, the `primary-50…950` ramp, radius scale, class-driven `dark:` variant, and the NUI base rules (transparent body, suppressed focus rings, scrollbar utilities). **Locked** — see [Drift policy](#drift-policy). |
+| **Fonts** | `@9am/fonts` | Poppins + Phudu embedded as base64. Kept out of `@9am/theme` on purpose — see [Fonts](#fonts). **Locked.** |
 | **Primitives** | 19 items | `button` (8 variants), `card`, `input`, `label`, `field`, `select`, `multi-select`, `switch`, `separator`, `table`, `data-table`, `tabs`, `dialog`, `popover`, `tooltip`, `info-tip`, `calendar`, `chart`, `viewport` |
 | **Icons** | 47 items | `@9am/icon-*` — hand-built animated SVGs, no icon library dependency. Each exposes `startAnimation()`/`stopAnimation()` through a ref so a parent (a tab, a table row) can drive it. |
 | **NUI** | `@9am/nui`, `@9am/visibility`, `@9am/use-theme`, `@9am/i18n` | `fetchNui`, `useNuiEvent`, `debugData`, browser-dev detection, frame visibility with ESC + focus release, theme store, and runtime i18n pulled from Lua. |
@@ -111,8 +112,24 @@ After adding `@9am/theme`, import it from your entry stylesheet:
 ```css
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./styles/9am-fonts.css";   /* or 9am-fonts-linked.css — see below */
 @import "./styles/9am-theme.css";
 ```
+
+---
+
+## Fonts
+
+`9am-theme.css` deliberately does **not** import a font stylesheet, because which one you want depends on your app:
+
+| | Use when | How |
+|---|---|---|
+| **`@9am/fonts`** (base64) | Single html entry — the common case | `bunx shadcn@latest add @9am/fonts` |
+| **Linked woff2** | Several html entries, especially DUI texture pages | `bunx 9am-ui fonts`, then import `9am-fonts-linked.css` |
+
+Embedding is the better default: one command, nothing else to fetch, and in a NUI everything is served off local disk so there is no network round-trip to save. It becomes the wrong choice as soon as you have multiple entry points — **every DUI is its own CEF instance**, so each one would decode the entire 322 KB payload again with nothing shared between them.
+
+`9am-vehicleshop` is the worked example: it has three entries (main NUI, phone, showroom stand) and `client/showroom.lua` calls `CreateDui` once per showroom slot, so it uses the linked variant everywhere.
 
 ---
 
@@ -138,7 +155,7 @@ bunx 9am-ui check     # run from web/, wire it into CI
 
 | What changed | Result |
 |---|---|
-| `src/styles/9am-theme.css` or `9am-fonts.css` | **Fails (exit 1).** Identical tokens are what make the scripts read as siblings. Restore with `bunx shadcn@latest add @9am/theme --overwrite`, or make the change here and release it. |
+| `src/styles/9am-theme.css` or `9am-fonts.css` | **Fails (exit 1).** Identical tokens are what make the scripts read as siblings. Restore with `bunx shadcn@latest add @9am/theme @9am/fonts --overwrite`, or make the change here and release it. |
 | Any component or icon | **Warns (exit 0).** Allowed — teams need the escape hatch — but a local fix helps nobody else. Consider upstreaming. |
 | `src/nui.config.ts` | Ignored. It is supposed to differ. |
 | Anything from `@9am/scaffold` | Ignored. A starting point, not a managed artifact. |
