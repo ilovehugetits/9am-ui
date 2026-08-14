@@ -1,0 +1,39 @@
+---
+title: Switch
+description: A binary toggle in two sizes.
+---
+
+import SwitchBasic from "@/examples/switch/basic";
+
+<Install name="switch" />
+
+## Example
+
+<Preview name="switch/basic">
+  <SwitchBasic />
+</Preview>
+
+## Sizes
+
+`default` is 32×18px; `sm` is 24×14px, for dense rows and table cells. The thumb
+sizes itself from the root through a `group-data-[size=*]` selector rather than
+taking its own prop, so the two can never disagree.
+
+## API
+
+Everything from `@radix-ui/react-switch` `Root`, plus:
+
+<TypeTable
+  type={{
+    size: { description: "Track and thumb size.", type: '"default" | "sm"', default: '"default"' },
+  }}
+/>
+
+Use `checked` + `onCheckedChange` for controlled, `defaultChecked` for
+uncontrolled. Pair it with a [`Label`](/docs/components/label) via `htmlFor` so
+the text is a hit target too — at NUI scale over a moving game, an 18px target
+is not enough on its own.
+
+## Files
+
+<ItemFiles name="switch" />

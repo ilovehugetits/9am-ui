@@ -1,0 +1,43 @@
+---
+title: Input
+description: A single-line text field on the kit's translucent fill.
+---
+
+import InputBasic from "@/examples/input/basic";
+import InputStates from "@/examples/input/states";
+
+<Install name="input" />
+
+## Example
+
+<Preview name="input/basic">
+  <InputBasic />
+</Preview>
+
+## States
+
+<Preview name="input/states">
+  <InputStates />
+</Preview>
+
+`aria-invalid` is what drives the error styling — there is no `error` prop. That
+keeps the visual state and the accessible state from ever disagreeing.
+[`Field`](/docs/components/field) sets it for you.
+
+Number inputs have their spinner buttons suppressed globally by
+[the theme](/docs/theme#base-rules); they are unusable at NUI scale and invite
+mis-clicks over a moving game.
+
+## Surface
+
+`bg-black/[0.05]` in light, `bg-white/10` in dark — translucent rather than a
+solid fill, so a field sitting on a card and a field sitting on the page
+background both look right without a variant.
+
+Focus draws a 3px `ring-ring/50` and shifts the border. Text is `text-base` on
+mobile widths and `text-sm` from `md` up, which is the standard shadcn trick to
+stop iOS zooming on focus; it is inert in CEF but harmless.
+
+## Files
+
+<ItemFiles name="input" />

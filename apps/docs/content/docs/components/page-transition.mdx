@@ -1,0 +1,56 @@
+---
+title: Page Transition
+description: Cross-fades between the pages of a dashboard, at the smallest scale that still reads as movement.
+---
+
+import PageTransitionBasic from "@/examples/page-transition/basic";
+
+<Install name="page-transition" />
+
+## Example
+
+<Preview name="page-transition/basic" center={false}>
+  <PageTransitionBasic />
+</Preview>
+
+## Two deliberate constraints
+
+**`mode="wait"`.** The outgoing page unmounts before the incoming one mounts.
+Overlapping them would double-mount data-fetching subpages — two `fetchNui`
+calls for one tab click — and at this scale of movement the overlap just reads
+as a smear.
+
+**A 0.995 scale delta.** Anything larger looks like a modal opening rather than
+a tab switching. It is also where CEF starts to stutter: a larger transform on a
+full-size subtree is enough to drop frames while the game is rendering behind it.
+
+## Usage
+
+`pageKey` is what triggers the transition — change it and the subtree
+remounts:
+
+```tsx
+<PageTransition pageKey={currentTab}>
+  {currentTab === "players" && <PlayersPage />}
+  {currentTab === "stock" && <StockPage />}
+</PageTransition>
+```
+
+The variants are exported as `PAGE_VARIANTS` if you need the same motion
+somewhere this component does not fit.
+
+## API
+
+<TypeTable
+  type={{
+    pageKey: {
+      description: "The active page id. Changing it plays the transition.",
+      type: "string",
+    },
+    className: { description: "Merged onto the motion div.", type: "string" },
+  }}
+/>
+
+## Files
+
+<ItemFiles name="page-transition" />

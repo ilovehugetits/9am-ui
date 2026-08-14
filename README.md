@@ -2,7 +2,7 @@
 
 The shared design language, NUI plumbing and FiveM CEF workarounds behind every 9AM Studios script.
 
-Distributed as a **private [shadcn registry](https://ui.shadcn.com/docs/registry)**: components are copied into each script rather than imported from a package, so a script can diverge when it genuinely needs to — while `9am-ui check` makes sure nobody diverges by accident.
+Distributed as a **[shadcn registry](https://ui.shadcn.com/docs/registry)**: components are copied into each script rather than imported from a package, so a script can diverge when it genuinely needs to — while `9am-ui check` makes sure nobody diverges by accident.
 
 Extracted from `9am-vehicleshop` v1.2.8, which is consumer #0.
 
@@ -30,19 +30,6 @@ Browse it all: `bun run preview` → <http://localhost:5173>.
 
 ---
 
-## Setup (once per machine)
-
-The registry is private, so `shadcn` needs a token.
-
-1. Create a GitHub PAT with **read access to `ilovehugetits/9am-ui`**.
-2. Export it (add to your shell profile so it survives a reboot):
-
-```bash
-export NINEAM_UI_TOKEN=github_pat_xxxxxxxx
-```
-
----
-
 ## Use it in a new script
 
 ```bash
@@ -66,8 +53,7 @@ Add `components.json`:
   },
   "registries": {
     "@9am": {
-      "url": "https://raw.githubusercontent.com/ilovehugetits/9am-ui/main/r/{name}.json",
-      "headers": { "Authorization": "Bearer ${NINEAM_UI_TOKEN}" }
+      "url": "https://raw.githubusercontent.com/ilovehugetits/9am-ui/main/r/{name}.json"
     }
   }
 }
@@ -94,7 +80,7 @@ Keep the `localStorage` key in `index.html` in sync with `themeStorageKey` (it r
 
 ```bash
 cd web && bun install && bun run build
-bunx 9am-ui doctor    # confirms auth, theme import and the CEF css setup
+bunx 9am-ui doctor    # confirms the registry, theme import and the CEF css setup
 ```
 
 ## Use it in an existing script
@@ -171,8 +157,16 @@ bun run preview     # eyeball it in both themes
 git commit -am "feat(button): ..." && git push
 ```
 
-`r/` is committed on purpose — `raw.githubusercontent.com` serves committed files, which is what lets a private repo act as a registry with no hosting at all.
+`r/` is committed on purpose — `raw.githubusercontent.com` serves committed files, which is what lets this repo act as a registry with no hosting at all.
 
 Consumers pick the change up on their next `shadcn add ... --overwrite`. Nothing auto-updates; that is deliberate.
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for adding a component.
+
+---
+
+## License
+
+[MIT](./LICENSE). Copy the components into your own scripts freely — that is what a copy-in registry is for.
+
+Poppins and Phudu ship under the [SIL Open Font License 1.1](https://openfontlicense.org/), which travels with them.

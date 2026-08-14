@@ -1,0 +1,157 @@
+---
+title: Viewport
+description: The house scroll container — draggable scrollbar, liquid-glass edges, blur-swapping sticky header, and every CEF-103 workaround the kit needs.
+---
+
+import ViewportBasic from "@/examples/viewport/basic";
+
+The most load-bearing component in the kit, and the one with the most reasons
+behind it.
+
+<Install name="viewport" />
+
+## Example
+
+Scroll it. The header blur-swaps to a sticky copy, glass bands fade in at the
+edges, and the scrollbar on the right can be dragged.
+
+<Preview name="viewport/basic" className="min-h-[480px]">
+  <ViewportBasic />
+</Preview>
+
+## Anatomy
+
+```tsx
+<Viewport>
+  <ViewportHeader>
+    <ViewportTitle>…</ViewportTitle>
+    <ViewportDescription>…</ViewportDescription>
+    <ViewportAction>…</ViewportAction>
+  </ViewportHeader>
+  <ViewportContent>…</ViewportContent>
+  <ViewportFooter>…</ViewportFooter>
+</Viewport>
+```
+
+`ViewportHeader` inspects its children for a `ViewportAction` and switches to a
+two-column grid when it finds one. It checks the child's component type in
+React rather than using `:has()` — see below for why.
+
+## Surface
+
+The viewport paints **no background of its own**. It sits directly on the page
+ground, and the top/bottom fades are gradients in that same colour — which is
+the whole reason they read as the content dissolving into the page rather than
+into a band of some other shade. Give the viewport a surface and the fades stop
+matching it.
+
+So the layering inside an `AppShell` is two levels, not three: the shell is
+`--background`, and `Card` uses `bg-input` to read as a raised panel on it.
+
+On a different ground — inside a dialog or a popover — redefine the token
+locally rather than passing `fadeColor`, so borders and children follow too:
+
+```tsx
+<Viewport className="[--background:var(--popover)]">
+```
+
+## Filling the height
+
+Inside a `PageTransition`, a viewport sizes to its content unless you tell it
+otherwise. For a scrolling list, `h-full min-h-0` is enough. For a page whose
+child manages its own scrolling — a `DataTable`, a chart — make the viewport a
+flex column so the child can claim the leftover space and its own footer stays
+on screen:
+
+```tsx
+<Viewport hideBottomFade className="h-full min-h-0 flex flex-col">
+  <ViewportHeader>…</ViewportHeader>
+  <ViewportContent className="flex-1 min-h-0 p-0!">
+    <DataTable … />
+  </ViewportContent>
+</Viewport>
+```
+
+`ViewportContent` carries `px-2` so plain text clears the edge; zero it with
+`p-0!` when the content is cards that should line up with the header.
+
+## What it works around
+
+This is the part worth reading before you change anything in it. FiveM's CEF is
+**Chromium 103**, and four things in this component exist only because of that.
+
+<Accordions>
+
+<Accordion title="clipPath instead of overflow + border-radius">
+
+Chromium 103 does not reliably clip composited layers to a rounded
+`overflow: hidden` container. Scrolling content and anything with its own
+compositing layer bleeds past the corners. `clip-path` clips correctly — at the
+cost of the next three problems.
+
+</Accordion>
+
+<Accordion title="Stacked fixed-blur bands instead of a masked backdrop-filter">
+
+The liquid-glass edges want a blur that fades out. `mask` does not apply to
+`backdrop-filter` output in 103, so a single masked band renders as a hard edge.
+Instead the component stacks several bands at fixed blur radii, each slightly
+smaller, which approximates a gradient. That is what `makeGlassLayers` builds.
+
+</Accordion>
+
+<Accordion title="JS-computed layout instead of :has() and @container">
+
+Neither exists in 103. Anywhere the layout needs to know about its own contents
+— the header's action column, the thumb geometry, the header height written back
+as `--viewport-header-h` — it is computed in JS with `ResizeObserver` and
+`IntersectionObserver` and written to the DOM imperatively.
+
+</Accordion>
+
+<Accordion title="A custom scrollbar, and a global wheel handler to move it">
+
+Native scrollbars cannot be styled to the design, and — the real problem — **CEF
+will not wheel-scroll a `clip-path`'d container at all**. The thumb here handles
+dragging; the wheel is handled by [`@9am/smooth-scroll`](/docs/lib/smooth-scroll),
+which must be installed in `main.tsx` or nothing scrolls in game while working
+perfectly in your browser.
+
+</Accordion>
+
+</Accordions>
+
+## The header blur-swap
+
+`ViewportHeader` renders **two** copies of its children: the real one in flow,
+and a `position: sticky` clone above it. An `IntersectionObserver` flips
+`pinned` when the real header scrolls half out of view, and the two crossfade
+with a blur.
+
+The glass blur is deliberately **not** on the sticky clone. `motion` animates
+`filter` on that element, which makes it a backdrop root and blocks the
+`backdrop-filter` inside it. The blur lives on the viewport's own top fade layer
+instead, driven by a `data-header-pinned` attribute the header writes to the
+root.
+
+## API
+
+<TypeTable
+  type={{
+    hideBottomFade: {
+      description: "Suppress the bottom glass band. For content that ends flush.",
+      type: "boolean",
+      default: "false",
+    },
+    fadeColor: {
+      description:
+        "The colour the fades and glass blend into. Must match the ground BEHIND the viewport, which is --background unless you have put it somewhere else. Prefer redefining --background locally over passing a colour here.",
+      type: "string",
+      default: '"var(--background)"',
+    },
+  }}
+/>
+
+## Files
+
+<ItemFiles name="viewport" />

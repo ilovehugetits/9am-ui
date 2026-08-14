@@ -1,0 +1,44 @@
+---
+title: Popover
+description: Anchored floating content, with optional header parts.
+---
+
+import PopoverBasic from "@/examples/popover/basic";
+
+<Install name="popover" />
+
+## Example
+
+<Preview name="popover/basic">
+  <PopoverBasic />
+</Preview>
+
+## Parts
+
+Beyond the Radix set — `Popover`, `PopoverTrigger`, `PopoverAnchor`,
+`PopoverContent` — the kit adds `PopoverHeader`, `PopoverTitle` and
+`PopoverDescription`. They are plain layout helpers so a popover's heading
+matches a card's or a dialog's without you restating the type scale.
+
+## Popover vs Dialog vs Tooltip
+
+| Use | When |
+|---|---|
+| [`Tooltip`](/docs/components/tooltip) | Explaining something. No interaction inside. |
+| `Popover` | A small interaction anchored to its trigger — a filter, a value, a colour. The rest of the UI stays usable. |
+| [`Dialog`](/docs/components/dialog) | A decision that blocks. Overlay, focus trap. |
+
+## Anchoring
+
+Use `PopoverAnchor` when the popover should position against something other
+than its trigger — a table row while the trigger is a small button inside it.
+
+`PopoverContent` takes `side`, `align` and `sideOffset` from Radix, and flips
+automatically when it would overflow the frame. Inside the fixed 1280×720
+[`AppShell`](/docs/components/app-shell) that collision boundary is the browser
+viewport, not the panel, so a popover near the panel edge can render over the
+game rather than flipping. Pass `collisionBoundary` if that matters.
+
+## Files
+
+<ItemFiles name="popover" />

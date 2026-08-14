@@ -1,0 +1,74 @@
+---
+title: Button
+description: Eight variants and five sizes, with a press-scale on every one.
+---
+
+import Variants from "@/examples/button/variants";
+import Sizes from "@/examples/button/sizes";
+import WithIcon from "@/examples/button/with-icon";
+
+<Install name="button" />
+
+## Variants
+
+<Preview name="button/variants">
+  <Variants />
+</Preview>
+
+`default2` is the workhorse for secondary actions inside panels — a low-contrast
+translucent fill (`bg-black/[0.05]` in light, `bg-white/10` in dark) that reads
+as interactive without competing with the primary action. It is what the data
+table's pagination and most icon buttons use.
+
+`navigation` is fixed to `h-9`, Phudu, and swaps to a solid primary fill on
+hover. It exists for top-level nav rows, and it overrides size — pairing it with
+a `size` prop does nothing useful.
+
+## Sizes
+
+<Preview name="button/sizes">
+  <Sizes />
+</Preview>
+
+Every variant scales to `0.95` while active. It is the one piece of feedback
+that survives being composited over a moving game.
+
+## With an animated icon
+
+<Preview name="button/with-icon">
+  <WithIcon />
+</Preview>
+
+Attaching a ref switches the icon into controlled mode, so the button drives the
+animation. Without the ref the icon animates on its own hover — which only
+covers the 16px the glyph occupies, not the control.
+
+## API
+
+<TypeTable
+  type={{
+    variant: {
+      description: "Visual style.",
+      type: '"default" | "default2" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "navigation"',
+      default: '"default"',
+    },
+    size: {
+      description: "Height and padding.",
+      type: '"default" | "sm" | "lg" | "icon" | "catalogNav"',
+      default: '"default"',
+    },
+    asChild: {
+      description: "Render the child element instead of a <button>, keeping the styles. Use for links.",
+      type: "boolean",
+      default: "false",
+    },
+  }}
+/>
+
+Everything else forwards to `<button>`. `buttonVariants` is exported separately
+for the cases where you need the classes without the element — the calendar uses
+it for its day cells.
+
+## Files
+
+<ItemFiles name="button" />

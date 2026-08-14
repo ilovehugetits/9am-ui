@@ -1,0 +1,40 @@
+---
+title: Overview
+description: Every primitive in the registry, drawn against the 9AM palette and tested in Chromium 103.
+---
+
+<ItemCount filter="ui" /> primitives plus <ItemCount filter="icons" /> animated
+icons. Each page has a live preview rendered from the same file shown in its
+Code tab — not a transcription of one.
+
+Add any of them with:
+
+```bash
+bunx shadcn@latest add @9am/<name>
+```
+
+Transitive dependencies resolve automatically, so `@9am/data-table` also
+installs `button`, `input`, `table`, `i18n` and three icons.
+
+<ComponentGrid />
+
+## Conventions
+
+Every component follows the same handful of rules.
+
+**`data-slot`.** Each element carries one — `data-slot="viewport-header"`,
+`data-slot="stat-card"`. It is how the components target each other's internals
+without exporting class names, and how you target them from your own CSS.
+
+**`className` merges, it does not replace.** Everything runs its classes through
+`cn()`, so passing `className` appends and Tailwind conflicts resolve in your
+favour.
+
+**Icons are nodes, not component props.** Components that take an icon take a
+`ReactNode`, so the caller keeps the ref. The kit's icons animate through an
+imperative handle, and hover usually belongs to the whole row rather than to the
+glyph's own hit box.
+
+**Text is never assembled.** Components that need a string take the finished
+sentence — `trend.label`, `countLabel(n)` — already translated and interpolated.
+Pluralisation and word order are the locale's business, not the component's.

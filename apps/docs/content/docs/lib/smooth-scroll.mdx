@@ -1,0 +1,47 @@
+---
+title: Smooth Scroll
+description: The global wheel handler that repairs scrolling in CEF. Without it, nothing scrolls in game.
+---
+
+<Install name="smooth-scroll" />
+
+## The bug it fixes
+
+FiveM's CEF **will not wheel-scroll a `clip-path`'d container at all.**
+
+[`Viewport`](/docs/components/viewport) uses `clip-path` instead of
+`overflow: hidden` with a border radius, because 103 does not reliably clip
+composited layers to a rounded overflow container. That fixes the clipping and
+breaks the wheel.
+
+The failure mode is nasty because it is invisible during development: your
+browser scrolls the viewport perfectly, and the same build in game does not
+scroll at all.
+
+## Install it in main.tsx
+
+```tsx title="src/main.tsx"
+import { installSmoothScroll } from "@/lib/smooth-scroll";
+
+installSmoothScroll();
+```
+
+Once, at module scope, before React renders. It attaches a single non-passive
+`wheel` listener on `window`, walks up from the event target to find the nearest
+scrollable ancestor, and animates `scrollTop` itself.
+
+<Callout type="warn">
+  `bunx 9am-ui doctor` checks for this call. It is one of the two
+  [CEF non-negotiables](/docs/cef).
+</Callout>
+
+## Side effect worth knowing
+
+Because it drives `scrollTop` in JS, scrolling is eased rather than
+instantaneous — which is where the name comes from, and which happens to match
+the design language. If you need a jump-to with no animation, set `scrollTop`
+directly; the handler only intercepts wheel events.
+
+## Files
+
+<ItemFiles name="smooth-scroll" />

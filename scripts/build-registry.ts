@@ -35,6 +35,7 @@ function itemOf(spec: string): string | null {
   if (spec === "@/lib/smooth-scroll") return "smooth-scroll";
   if (spec === "@/hooks/useTheme") return "use-theme";
   if (spec.startsWith("@/hooks/") || spec.startsWith("@/utils/")) return "nui";
+  if (spec === "@/providers/NavigationProvider") return "navigation";
   if (spec.startsWith("@/providers/")) return "visibility";
   if (spec.startsWith("@/components/ui/")) {
     const base = spec.slice("@/components/ui/".length);
@@ -76,7 +77,15 @@ const TITLES: Record<string, string> = {
   utils: "cn()",
   "smooth-scroll": "Smooth Scroll (CEF fix)",
   viewport: "Viewport",
+  navigation: "Navigation Provider",
   scaffold: "Script Scaffold",
+  "app-shell": "App Shell",
+  "dashboard-header": "Dashboard Header",
+  "page-transition": "Page Transition",
+  "section-header": "Section Header",
+  "stat-card": "Stat Card",
+  "empty-state": "Empty State",
+  "dashboard-scaffold": "Dashboard Scaffold",
 };
 
 const DESCRIPTIONS: Record<string, string> = {
@@ -97,6 +106,21 @@ const DESCRIPTIONS: Record<string, string> = {
     "The 9AM scroll container: drag-able custom scrollbar, layered liquid-glass edges, and a header that blur-swaps to a sticky copy on scroll. Contains the CEF-103 compositing workarounds.",
   scaffold:
     "New-script web skeleton: vite/tsconfig/eslint/postcss (including the oklch conversion CEF requires), index.html, main.tsx and a starter App. Run `bunx 9am-ui lua` afterwards for the Lua half (NUI bridge, locale module, fxmanifest).",
+  navigation:
+    "Top-level page store driven by the `setPage` message, for scripts where Lua decides which screen opens. A single screen with tabs does not need it.",
+  "app-shell":
+    "The fixed 1280x720 centred panel every 9AM dashboard sits in. Fixed rather than fluid so the layout is identical at 1080p and ultrawide.",
+  "dashboard-header":
+    "Identity, centred animated tabs and an action cluster. Tabs are passed as data — the per-tab animation handle and three-state icon colour live inside, so adding a tab is one array entry.",
+  "page-transition":
+    "Cross-fade between dashboard pages: AnimatePresence in wait mode with the 9AM opacity/scale variants, tuned small enough to stay smooth in CEF.",
+  "section-header":
+    "The title row a subpage opens with: icon chip, Phudu title, optional action. Goes inside a ViewportTitle.",
+  "stat-card":
+    "Headline metric: icon chip, label, Phudu value and an optional trend line that picks its arrow and colour from a signed percentage.",
+  "empty-state": "What a list renders instead of nothing, sized and muted to match across scripts.",
+  "dashboard-scaffold":
+    "Everything in @9am/scaffold plus a working dashboard: the shell, a header with animated tabs, page transitions and an example subpage built from section-header, stat-card and empty-state. Start here for anything with more than one screen.",
 };
 
 const titleize = (n: string) =>
@@ -138,9 +162,9 @@ items.push({
 });
 
 // ---- tools ----------------------------------------------------------------
-// Ships through the registry rather than as a package: bun resolves git deps
-// via the GitHub tarball API, which 404s on a private repo, so an installable
-// CLI would mean configuring auth a second time in every script and CI job.
+// Ships through the registry rather than as a package, so `shadcn add` stays
+// the single install channel a consuming script needs and the tool version
+// tracks the kit version it was pulled with.
 items.push({
   name: "tools",
   type: "registry:file",
@@ -192,6 +216,7 @@ const NUI_FILES: File[] = [
 const EXTRAS: Array<[string, string, string, string | undefined]> = [
   ["use-theme", "registry/nui/useTheme.ts", "registry:hook", undefined],
   ["visibility", "registry/nui/VisibilityProvider.tsx", "registry:file", "src/providers/VisibilityProvider.tsx"],
+  ["navigation", "registry/nui/NavigationProvider.tsx", "registry:file", "src/providers/NavigationProvider.tsx"],
   ["i18n", "registry/i18n/index.ts", "registry:file", "src/i18n/index.ts"],
 ];
 for (const [name, file, type, target] of EXTRAS) {
@@ -255,6 +280,33 @@ items.push({
   registryDependencies: ["@9am/theme", "@9am/fonts", "@9am/nui", "@9am/i18n", "@9am/visibility", "@9am/use-theme", "@9am/utils", "@9am/smooth-scroll", "@9am/viewport", "@9am/button", "@9am/icon-x", "@9am/icon-theme-toggle"],
   files: SCAFFOLD,
 });
+
+// ---- dashboard scaffold ---------------------------------------------------
+// Layers on top of @9am/scaffold rather than duplicating it: shadcn installs
+// registryDependencies before the item's own files, so the App.tsx below wins
+// over the starter one @9am/scaffold writes to the same target.
+{
+  const DASHBOARD_SCAFFOLD: File[] = [
+    { path: "registry/dashboard-scaffold/App.tsx", type: "registry:file", target: "src/components/App.tsx" },
+    { path: "registry/dashboard-scaffold/Overview.tsx", type: "registry:file", target: "src/components/pages/Overview.tsx" },
+  ];
+  const deps = new Set<string>();
+  const registryDeps = new Set<string>(["@9am/scaffold"]);
+  for (const f of DASHBOARD_SCAFFOLD) {
+    const s = scan(path.join(ROOT, f.path));
+    s.deps.forEach((d) => deps.add(d));
+    s.registryDeps.forEach((d) => registryDeps.add(d));
+  }
+  items.push({
+    name: "dashboard-scaffold",
+    type: "registry:file",
+    title: TITLES["dashboard-scaffold"],
+    description: DESCRIPTIONS["dashboard-scaffold"],
+    ...(deps.size ? { dependencies: [...deps].sort() } : {}),
+    registryDependencies: [...registryDeps].sort(),
+    files: DASHBOARD_SCAFFOLD,
+  });
+}
 
 const registry = {
   $schema: "https://ui.shadcn.com/schema/registry.json",

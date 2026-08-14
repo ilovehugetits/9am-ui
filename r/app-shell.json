@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "app-shell",
+  "title": "App Shell",
+  "description": "The fixed 1280x720 centred panel every 9AM dashboard sits in. Fixed rather than fluid so the layout is identical at 1080p and ultrawide.",
+  "registryDependencies": [
+    "@9am/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/ui/app-shell.tsx",
+      "content": "import * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\n/**\n * The 9AM full-screen frame: a fixed-size panel centred in the NUI viewport.\n *\n * Fixed rather than fluid on purpose. The NUI is composited over the game at\n * whatever resolution the player runs, and a fluid layout means a dashboard\n * that is cramped at 1080p and stretched to nothing at ultrawide. A fixed\n * 1280x720 panel is identical for everyone and matches the proportions the\n * design language was drawn at.\n *\n * The outer div stays transparent — the game shows through around the panel.\n *\n * ```tsx\n * <AppShell>\n *   <DashboardHeader … />\n *   <PageTransition pageKey={tab}>{…}</PageTransition>\n * </AppShell>\n * ```\n */\nfunction AppShell({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div className=\"h-full w-full max-w-screen flex items-center justify-center relative overflow-hidden\">\n      <div\n        data-slot=\"app-shell\"\n        className={cn(\n          // pb-0: the page area below the header runs to the panel edge, so a\n          // scrolling subpage fades out against it instead of stopping short.\n          \"max-w-[1280px] w-full h-[720px] max-h-[720px] overflow-hidden flex flex-col bg-background rounded-3xl gap-4 p-3 pb-0\",\n          className\n        )}\n        {...props}\n      />\n    </div>\n  )\n}\n\nexport { AppShell }\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

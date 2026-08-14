@@ -1,0 +1,66 @@
+---
+title: Calendar
+description: Date picking on react-day-picker, restyled to the 9AM palette.
+---
+
+import CalendarBasic from "@/examples/calendar/basic";
+
+<Install name="calendar" />
+
+## Example
+
+<Preview name="calendar/basic">
+  <CalendarBasic />
+</Preview>
+
+## Modes
+
+`mode` comes straight from `react-day-picker`: `"single"`, `"multiple"`,
+`"range"`, or omitted for a display-only month. The selection prop changes with
+it — `selected` is a `Date`, a `Date[]` or a `{ from, to }` accordingly.
+
+## Kit-specific props
+
+<TypeTable
+  type={{
+    captionLayout: {
+      description: "Month/year heading. Switch to a dropdown for far-away dates.",
+      type: '"label" | "dropdown" | "dropdown-months" | "dropdown-years"',
+      default: '"label"',
+    },
+    buttonVariant: {
+      description: "Which Button variant the day cells use.",
+      type: "Button['variant']",
+      default: '"ghost"',
+    },
+  }}
+/>
+
+Everything else forwards to `DayPicker`. `CalendarDayButton` is exported for
+custom day rendering.
+
+## In a popover
+
+The usual arrangement — trigger shows the formatted date, calendar lives in a
+[`Popover`](/docs/components/popover):
+
+```tsx
+<Popover>
+  <PopoverTrigger asChild>
+    <Button variant="outline">{date ? format(date) : "Pick a date"}</Button>
+  </PopoverTrigger>
+  <PopoverContent className="w-auto p-0">
+    <Calendar mode="single" selected={date} onSelect={setDate} />
+  </PopoverContent>
+</Popover>
+```
+
+<Callout>
+  The calendar has no surface of its own — pass `className="rounded-lg border
+  bg-input"` when it stands alone, or `p-0` on the popover content when it does
+  not.
+</Callout>
+
+## Files
+
+<ItemFiles name="calendar" />

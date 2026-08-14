@@ -1,0 +1,47 @@
+---
+title: Info Tip
+description: The "?" glyph and its explanation, plus a one-line wrapper for tooltipping anything.
+---
+
+import InfoTipBasic from "@/examples/info-tip/basic";
+
+<Install name="info-tip" />
+
+## Example
+
+<Preview name="info-tip/basic">
+  <InfoTipBasic />
+</Preview>
+
+## Two components
+
+**`InfoTip`** renders a 13px question-mark circle with `cursor-help` and the
+tooltip attached. Drop it inside a [`Label`](/docs/components/label) — the label
+is already a flex row, so it aligns itself.
+
+**`Tip`** wraps an existing element in a tooltip. It is the shorter form of
+`Tooltip` + `TooltipTrigger asChild` + `TooltipContent`, which is most of what
+tooltips are used for.
+
+## The icon is inline SVG
+
+Unlike the rest of the kit's glyphs, this one is not an
+[`@9am/icon-*`](/docs/components/icons) component. It never animates, it is
+always the same 13px, and it is only ever used here — so an inline path avoids
+a registry item and a `motion` subtree for a shape that does nothing.
+
+## Disabled triggers
+
+Same caveat as [`Tooltip`](/docs/components/tooltip): a disabled button
+swallows pointer events, so wrap it in a `span` the tooltip can hover. The
+example above shows it.
+
+## API
+
+Both take `side` (`"top" | "right" | "bottom" | "left"`, default `"top"`).
+`InfoTip` takes its text as `children`; `Tip` takes it as `label` and the
+element to wrap as `children`.
+
+## Files
+
+<ItemFiles name="info-tip" />

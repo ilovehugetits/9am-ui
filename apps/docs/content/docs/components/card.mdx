@@ -1,0 +1,53 @@
+---
+title: Card
+description: The base surface — header, content, footer, and an action slot that reflows the header grid.
+---
+
+import CardBasic from "@/examples/card/basic";
+
+<Install name="card" />
+
+## Example
+
+<Preview name="card/basic">
+  <CardBasic />
+</Preview>
+
+## The action slot reflows the header
+
+`CardHeader` is a grid. Adding a `CardAction` switches it to two columns via
+`has-data-[slot=card-action]:grid-cols-[1fr_auto]`, so the action pins to the
+right across both header rows without you touching the layout.
+
+<Callout type="warn">
+  That `has-*` selector compiles to `:has()`, which **does not exist in Chromium
+  103**. In game the header stays single-column and the action wraps below the
+  description. If the two-column header matters for a screen that ships to CEF,
+  lay it out explicitly rather than relying on the action slot — this is the same
+  constraint that pushed [Viewport](/docs/components/viewport) to compute its
+  header grid in JS.
+</Callout>
+
+## Surface
+
+`Card` uses `bg-input`, not `bg-card`. In the dark palette those are close, but
+`bg-input` is what gives the raised, slightly-lighter panel the design language
+uses inside a viewport. The [Viewport](/docs/components/viewport) itself is
+transparent, so a card is raised against the page ground (`--background`)
+directly — there is no surface between the two.
+
+## Parts
+
+| Part | What it does |
+|---|---|
+| `Card` | The surface. `rounded-2xl`, `py-4`, column flex with `gap-6`. |
+| `CardHeader` | Grid; adds a second column when a `CardAction` is present. |
+| `CardTitle` | Semibold, tight leading. |
+| `CardDescription` | Muted, small. |
+| `CardAction` | Top-right slot. |
+| `CardContent` | Horizontal padding only — the card owns vertical rhythm. |
+| `CardFooter` | Flex row; adds top padding when you give it `border-t`. |
+
+## Files
+
+<ItemFiles name="card" />

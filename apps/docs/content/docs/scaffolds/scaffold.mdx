@@ -1,0 +1,78 @@
+---
+title: Scaffold
+description: A whole script's UI from nothing — configs, entry point, starter App, plus the Lua side.
+---
+
+<Install name="scaffold" />
+
+Then, from the resource root:
+
+```bash
+bunx 9am-ui lua
+```
+
+## What it writes
+
+<Files>
+  <Folder name="web" defaultOpen>
+    <File name="index.html" />
+    <File name="vite.config.ts" />
+    <File name="tsconfig.json" />
+    <File name="postcss.config.js" />
+    <File name="eslint.config.js" />
+    <Folder name="src" defaultOpen>
+      <File name="main.tsx" />
+      <File name="App.tsx" />
+      <File name="index.css" />
+      <File name="nui.config.ts" />
+    </Folder>
+  </Folder>
+  <File name="fxmanifest.lua" />
+  <Folder name="client">
+    <File name="main.lua" />
+  </Folder>
+</Files>
+
+Plus every registry item those files reference — theme, fonts, the NUI layer,
+`cn`, smooth-scroll.
+
+## What is already wired
+
+`main.tsx` installs smooth scroll, boots
+[i18n](/docs/nui/i18n), and mounts the app inside a
+[`VisibilityProvider`](/docs/nui/visibility). `index.html` carries the pre-paint
+theme script. `postcss.config.js` has `postcss-color-converter` — both
+[CEF non-negotiables](/docs/cef#the-two-non-negotiables) are satisfied out of
+the box.
+
+## The one file to edit
+
+```ts title="web/src/nui.config.ts"
+export const nuiConfig = {
+  resourceName: "my-script",
+  themeStorageKey: "my-script:theme",
+  defaultTheme: "dark",
+};
+```
+
+<Callout type="warn">
+  Keep the `localStorage` key in `index.html` in sync with `themeStorageKey`.
+  The inline script runs before first paint to avoid a theme flash, and it cannot
+  read the config module.
+</Callout>
+
+## It is not managed after this
+
+`9am-ui check` ignores everything the scaffold writes. It is a starting point,
+not a tracked artifact — change it freely.
+
+## Next
+
+<Cards>
+  <Card title="Dashboard scaffold" href="/docs/scaffolds/dashboard-scaffold" description="If you want a dashboard rather than a blank page." />
+  <Card title="Components" href="/docs/components" description="Start adding things." />
+</Cards>
+
+## Files
+
+<ItemFiles name="scaffold" />

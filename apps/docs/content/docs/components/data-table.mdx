@@ -1,0 +1,80 @@
+---
+title: Data Table
+description: Search, sort and pagination over TanStack Table, wired to the kit's i18n.
+---
+
+import DataTableBasic from "@/examples/data-table/basic";
+
+<Install name="data-table" />
+
+## Example
+
+Type in the search box, click a header to sort, page through with the arrows.
+
+<Preview name="data-table/basic" center={false} className="p-4">
+  <DataTableBasic />
+</Preview>
+
+## Columns
+
+Standard TanStack `ColumnDef`. Nothing kit-specific:
+
+```tsx
+const columns: ColumnDef<Sale>[] = [
+  { accessorKey: "plate", header: "Plate" },
+  {
+    accessorKey: "price",
+    header: "Price",
+    cell: ({ row }) => `$${row.original.price.toLocaleString("en-US")}`,
+  },
+];
+```
+
+## It fills its container
+
+The root is `h-full` with the scroll area as `flex-1`, so the table sizes to
+whatever you put it in — give the parent a height. Inside a
+[`ViewportContent`](/docs/components/viewport) that comes for free.
+
+Page size is fixed at 10.
+
+## Strings
+
+Every label falls back to `KIT_DEFAULTS` in [`@9am/i18n`](/docs/nui/i18n), so a
+freshly scaffolded script shows "No results." rather than the raw key
+`ui.common.noResults`. To localise them, add these to your `locales/*.json`:
+
+| Key | Default |
+|---|---|
+| `ui.common.searchPlaceholder` | `Search...` |
+| `ui.common.noResults` | `No results.` |
+| `ui.common.rowCount` | `{count} row(s)` |
+| `ui.common.pageOf` | `Page {page} of {total}` |
+
+`countLabel` overrides the footer count where a domain-specific phrasing reads
+better — `(n) => t("ui.sales.count", { count: n })`.
+
+## API
+
+<TypeTable
+  type={{
+    columns: { description: "TanStack column definitions.", type: "ColumnDef<TData, TValue>[]" },
+    data: { description: "The rows.", type: "TData[]" },
+    searchPlaceholder: {
+      description: "Overrides ui.common.searchPlaceholder.",
+      type: "string",
+    },
+    toolbar: {
+      description: "Rendered to the right of the search box. Filters, an export button.",
+      type: "ReactNode",
+    },
+    countLabel: {
+      description: "Footer row-count label. Receives the filtered count.",
+      type: "(count: number) => string",
+    },
+  }}
+/>
+
+## Files
+
+<ItemFiles name="data-table" />

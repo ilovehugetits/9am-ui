@@ -1,0 +1,77 @@
+---
+title: Dashboard Header
+description: Who you are on the left, where you are in the middle, what you can do on the right.
+---
+
+import DashboardHeaderBasic from "@/examples/dashboard-header/basic";
+
+<Install name="dashboard-header" />
+
+## Example
+
+<Preview name="dashboard-header/basic" center={false}>
+  <DashboardHeaderBasic />
+</Preview>
+
+## Tabs are data, not children
+
+Each trigger needs its own imperative animation handle and a three-state colour.
+Hand-rolled, that is a dozen near-identical lines per tab — the kind of
+duplication that drifts the moment someone adds a tab and copies the wrong
+block. So you pass an array and the ref plumbing stays inside:
+
+```tsx
+const TABS: DashboardTab[] = [
+  { value: "overview", label: t("ui.tabs.overview"), icon: LayoutGridIcon },
+  { value: "stock", label: t("ui.tabs.stock"), icon: BoxesIcon },
+];
+```
+
+The handles are keyed by `value` rather than held in an array, because a plain
+array would shift under the tabs the moment you filter the list.
+
+## Gate access by filtering
+
+A tab a player cannot reach should not be in the array at all — there is no
+disabled trigger hinting at it:
+
+```tsx
+const tabs = ALL_TABS.filter((tab) => permissions.includes(tab.value));
+```
+
+## Icon colours are inline, not classes
+
+Active tabs take the brand gold in dark and the deeper amber `--primary` in
+light; hover goes to the foreground extreme; idle sits at neutral grey. These
+are set as an inline `color` rather than a `text-*` utility because the kit's
+icons paint their strokes from `currentColor`, which a Tailwind class on the
+wrapper would not reach through the `motion` elements.
+
+<Callout title="On this page only">
+  The component reads the current theme from
+  [`useTheme`](/docs/nui/use-theme) — the kit's own store. This site has its own
+  theme switcher, so the active-tab icon colour in the preview above does not
+  follow the site toggle. In a script, where `useTheme` owns the `.dark` class,
+  it does.
+</Callout>
+
+## API
+
+<TypeTable
+  type={{
+    tabs: {
+      description: "The tab list. Each entry is { value, label, icon? }.",
+      type: "DashboardTab[]",
+    },
+    value: { description: "Active tab value.", type: "string" },
+    onValueChange: { description: "Called with the new tab value.", type: "(value: string) => void" },
+    name: { description: "Player name, shown large.", type: "ReactNode" },
+    greeting: { description: "Muted line above the name.", type: "ReactNode" },
+    avatar: { description: "Rendered inside a 48×48 rounded chip. Usually a mugshot <img>.", type: "ReactNode" },
+    actions: { description: "Right-hand slot. Close button, theme toggle, whatever.", type: "ReactNode" },
+  }}
+/>
+
+## Files
+
+<ItemFiles name="dashboard-header" />

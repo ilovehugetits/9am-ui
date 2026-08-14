@@ -1,0 +1,24 @@
+---
+title: Registry manifest
+description: Every item in the registry, generated from registry.json.
+icon: List
+full: true
+---
+
+<ItemCount /> items. This table is read from `registry.json` at build time, so
+it cannot drift from what `shadcn add` actually serves.
+
+Add any of them with `bunx shadcn@latest add @9am/<name>` — see
+[Installation](/docs/getting-started/installation) for the token setup.
+
+## Primitives
+
+<RegistryTable filter="ui" />
+
+## Icons
+
+<RegistryTable filter="icons" />
+
+## Theme, NUI, lib and scaffolds
+
+<RegistryTable filter="other" />

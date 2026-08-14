@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "page-transition",
+  "title": "Page Transition",
+  "description": "Cross-fade between dashboard pages: AnimatePresence in wait mode with the 9AM opacity/scale variants, tuned small enough to stay smooth in CEF.",
+  "dependencies": [
+    "motion@^12.42.2"
+  ],
+  "registryDependencies": [
+    "@9am/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/ui/page-transition.tsx",
+      "content": "import * as React from \"react\"\nimport { AnimatePresence, motion } from \"motion/react\"\n\nimport { cn } from \"@/lib/utils\"\n\nconst PAGE_VARIANTS = {\n  initial: { opacity: 0, scale: 0.995 },\n  animate: { opacity: 1, scale: 1 },\n  exit: { opacity: 0, scale: 0.995 },\n}\n\n/**\n * Cross-fades between the pages of a dashboard.\n *\n * `mode=\"wait\"` so the outgoing page is gone before the incoming one mounts —\n * overlapping them would double-mount data-fetching subpages and, at this\n * scale of movement, just reads as a smear.\n *\n * The scale delta is deliberately tiny (0.995). Anything more looks like a\n * modal opening rather than a tab switching, and in CEF a larger transform on\n * a full-size subtree is where compositing starts to stutter.\n *\n * ```tsx\n * <PageTransition pageKey={currentTab}>\n *   {currentTab === \"players\" && <PlayersPage />}\n * </PageTransition>\n * ```\n */\nfunction PageTransition({\n  pageKey,\n  className,\n  children,\n}: {\n  /** Changing this is what triggers the transition — the active page id. */\n  pageKey: string\n  className?: string\n  children: React.ReactNode\n}) {\n  return (\n    <AnimatePresence mode=\"wait\">\n      <motion.div\n        key={pageKey}\n        data-slot=\"page-transition\"\n        initial=\"initial\"\n        animate=\"animate\"\n        exit=\"exit\"\n        variants={PAGE_VARIANTS}\n        transition={{ duration: 0.15, ease: \"easeInOut\" }}\n        className={cn(\"flex-1 min-h-0 h-full\", className)}\n      >\n        {children}\n      </motion.div>\n    </AnimatePresence>\n  )\n}\n\nexport { PageTransition, PAGE_VARIANTS }\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

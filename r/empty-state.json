@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "empty-state",
+  "title": "Empty State",
+  "description": "What a list renders instead of nothing, sized and muted to match across scripts.",
+  "registryDependencies": [
+    "@9am/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/ui/empty-state.tsx",
+      "content": "import * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\n/**\n * What a list renders instead of nothing.\n *\n * Sized and muted to match the empty lists across the 9AM scripts, so \"no\n * results\" reads as a state rather than as a broken panel.\n *\n * ```tsx\n * {players.length === 0 && <EmptyState message={t(\"ui.players.empty\")} />}\n * ```\n */\nfunction EmptyState({\n  message,\n  icon,\n  action,\n  className,\n  ...props\n}: {\n  message: React.ReactNode\n  icon?: React.ReactNode\n  action?: React.ReactNode\n} & React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"empty-state\"\n      className={cn(\n        \"flex flex-col items-center justify-center gap-2.5 h-32 text-foreground/50 text-base\",\n        className\n      )}\n      {...props}\n    >\n      {icon}\n      <span>{message}</span>\n      {action}\n    </div>\n  )\n}\n\nexport { EmptyState }\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

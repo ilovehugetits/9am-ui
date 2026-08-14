@@ -1,0 +1,84 @@
+---
+title: FiveM CEF
+description: Chromium 103, and the two things that will silently ruin a build.
+icon: TriangleAlert
+---
+
+FiveM's CEF is **Chromium 103**, released mid-2022. Everything on this page
+follows from that.
+
+The dangerous part is that your development browser is not Chromium 103. A build
+can look perfect in `bun run start` and be completely broken in game, with no
+error anywhere.
+
+## The two non-negotiables
+
+<Steps>
+
+<Step>
+
+### `postcss.config.js` must keep `postcss-color-converter`
+
+Every token in [the theme](/docs/theme) is authored in `oklch()`, which CEF
+cannot parse. Without the conversion the UI renders **completely unstyled** in
+game while looking perfect locally.
+
+Verify it:
+
+```bash
+bun run build && grep -c oklch dist/assets/*.css   # must be 0
+```
+
+</Step>
+
+<Step>
+
+### `installSmoothScroll()` must run in `main.tsx`
+
+Otherwise nothing scrolls in game. See
+[smooth-scroll](/docs/lib/smooth-scroll) for why.
+
+</Step>
+
+</Steps>
+
+```bash
+bunx 9am-ui doctor
+```
+
+checks both, including scanning your built CSS for surviving `oklch()`.
+
+## What 103 does not have
+
+| Feature | Landed in | Consequence |
+|---|---|---|
+| `:has()` | 105 | Any `has-*` utility is inert. Affects [Card](/docs/components/card#the-action-slot-reflows-the-header) and [Field](/docs/components/field). |
+| `@container` | 105 | Container queries never match. `@container/card-header` is decorative. |
+| `mask` on `backdrop-filter` output | — | Why [Viewport](/docs/components/viewport) stacks fixed-blur bands. |
+| Reliable clipping of composited layers to rounded `overflow` | — | Why Viewport uses `clip-path`, which in turn breaks wheel scrolling. |
+| `oklch()` | 111 | The whole reason for `postcss-color-converter`. |
+
+Tailwind v4 emits all of these happily — it targets modern browsers. Nothing
+warns you.
+
+## Writing new components for CEF
+
+- **No `:has()`, no `@container`.** If layout has to know about its contents,
+  compute it in JS with `ResizeObserver` and write it to the DOM. Viewport is the
+  worked example.
+- **Keep transforms small.** A large transform on a full-size subtree drops
+  frames while the game renders behind it. [`PageTransition`](/docs/components/page-transition)
+  moves 0.5%.
+- **Watch `filter` and stacking contexts.** Animating `filter` makes an element a
+  backdrop root and blocks `backdrop-filter` inside it — which is why the
+  viewport's glass blur lives on a sibling layer rather than on the header that
+  animates.
+- **Test in game before calling it done.** `bun run preview` catches API
+  breakage. It cannot catch any of this.
+
+## Why not just target modern CSS
+
+FiveM ships the CEF version it ships. Nothing about the constraint is under
+anyone's control here, so the kit absorbs it once — in `viewport`,
+`smooth-scroll` and the postcss config — rather than every script rediscovering
+it.

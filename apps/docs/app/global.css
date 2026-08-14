@@ -1,0 +1,168 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* The kit's own tokens, imported verbatim from the registry — this file is the
+   single source of truth for both the docs chrome and every live preview on
+   it. If the theme drifts, the docs drift with it, which is the point. */
+@import "../../../registry/theme/9am-theme.css";
+
+/* Fumadocs reads its palette from --color-fd-*; its `shadcn` preset maps those
+   straight onto the shadcn token names that 9am-theme.css already defines. So
+   the sidebar, search dialog and code blocks come out in the 9AM palette with
+   no bridging layer of our own. Must come after the theme import. */
+@import "fumadocs-ui/css/shadcn.css";
+@import "fumadocs-ui/css/preset.css";
+
+/* Tailwind scans from this file's project by default; the components being
+   documented live outside it, so point the scanner at them explicitly —
+   same reason apps/preview/src/preview.css does. */
+@source "../../../registry/ui";
+@source "../../../registry/icons";
+@source "../../../registry/dashboard-scaffold";
+@source "../examples";
+@source "../components";
+@source "../content";
+
+/* --------------------------------------------------------------------------
+   FONTS — the linked woff2 variant (`bunx 9am-ui fonts`), not the base64 one.
+   A docs site is a normal multi-page web app served over HTTP with a cache,
+   which is precisely the case where embedding is the wrong trade.
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Poppins-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/Poppins-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/Poppins-SemiBold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/Poppins-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Phudu";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/Phudu-SemiBold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Phudu";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/Phudu-Bold.woff2") format("woff2");
+}
+
+/* --------------------------------------------------------------------------
+   UNDOING THE NUI BASE RULES
+
+   9am-theme.css is written for a CEF overlay: the page is a transparent,
+   non-scrolling surface composited over the game. All three of those are wrong
+   for a docs site, so they get reverted here rather than in the registry — the
+   registry file is correct for its actual consumers.
+   -------------------------------------------------------------------------- */
+html,
+body {
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
+  background-color: var(--background);
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+html > body[data-scroll-locked] {
+  margin-right: 0px !important;
+  --removed-body-scroll-bar-size: 0px !important;
+}
+
+/* The kit kills every focus outline because a game NUI is pointer-driven and a
+   stray Tab ring reads as a rendering bug. A docs site is keyboard-navigated,
+   so put the ring back — but only outside the previews, which should behave
+   exactly as they do in-game. */
+body :focus-visible:not([data-preview] *) {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* -------------------------------------------------------------- typography */
+
+.font-display {
+  font-family: "Phudu", sans-serif;
+}
+
+/* Fumadocs renders headings with its own stack; give the docs the kit's
+   display face so the site reads as part of the same design language. */
+#nd-docs-layout h1,
+#nd-docs-layout h2,
+#nd-page h1,
+article h1 {
+  font-family: "Phudu", sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* ------------------------------------------------------------ preview host */
+
+/* Live previews are islands of NUI inside a normal document. They get the card
+   surface so components that are transparent by design (viewport, app-shell)
+   have something to sit on, and a contained stacking context so a popover or
+   dialog inside one cannot escape over the docs nav. */
+[data-preview] {
+  color: var(--foreground);
+}
+
+[data-preview] ::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+/* ---------------------------------------------------------------- code pane */
+
+/*
+  The Code tab opens at exactly the height the Preview tab was, so switching
+  between them never resizes the container. `--preview-height` is written by
+  PreviewShell from a live measurement; the fallback only applies for the frame
+  before it lands.
+
+  These are unlayered rules, so they beat the `max-h-[600px]` utility fumadocs
+  puts on the same element without needing !important.
+*/
+[data-code-pane] > figure {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+[data-code-pane] .preview-code-viewport {
+  height: var(--preview-height, 260px);
+  max-height: none;
+  /* Room for the Expand button, which floats over the last lines. */
+  padding-bottom: 2.75rem;
+}
+
+[data-code-pane][data-expanded] .preview-code-viewport {
+  height: auto;
+  max-height: none;
+  padding-bottom: 0.875rem;
+}

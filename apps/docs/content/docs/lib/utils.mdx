@@ -1,0 +1,44 @@
+---
+title: cn
+description: clsx plus tailwind-merge. Every component in the kit runs its classes through it.
+---
+
+<Install name="utils" />
+
+```ts title="lib/utils.ts"
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+## Why every component uses it
+
+`clsx` handles the conditional forms — arrays, objects, falsy values.
+`tailwind-merge` resolves conflicts so the **last** class wins:
+
+```tsx
+cn("px-4 py-2", "px-6");
+// -> "py-2 px-6"
+```
+
+Without the merge, `px-4 px-6` both end up in the class list and the winner is
+whichever CSS rule Tailwind happened to emit last — which is stable but not
+something a caller can reason about.
+
+This is what makes `className` on a kit component *override* rather than
+*fight*:
+
+```tsx
+<Button className="px-8">Wide</Button>
+```
+
+The variant's `px-4` loses cleanly.
+
+## Where it lands
+
+`lib/utils.ts` in a consumer project, imported as `@/lib/utils`. Almost every
+other registry item lists it as a dependency, so you rarely add it explicitly.
+
+## Files
+
+<ItemFiles name="utils" />

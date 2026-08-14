@@ -1,0 +1,38 @@
+---
+title: Empty State
+description: What a list renders instead of nothing.
+---
+
+import EmptyStateBasic from "@/examples/empty-state/basic";
+
+<Install name="empty-state" />
+
+## Example
+
+<Preview name="empty-state/basic">
+  <EmptyStateBasic />
+</Preview>
+
+## Why it exists
+
+Sized and muted to match the empty lists across the 9AM scripts, so "no results"
+reads as a **state** rather than as a panel that failed to load. A fixed `h-32`
+means the surrounding layout does not jump when the list empties.
+
+```tsx
+{players.length === 0 && <EmptyState message={t("ui.players.empty")} />}
+```
+
+## API
+
+<TypeTable
+  type={{
+    message: { description: "The line of text. Already translated.", type: "ReactNode" },
+    icon: { description: "Optional, above the message.", type: "ReactNode" },
+    action: { description: "Optional, below it. A button that resolves the emptiness.", type: "ReactNode" },
+  }}
+/>
+
+## Files
+
+<ItemFiles name="empty-state" />

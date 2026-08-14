@@ -1,0 +1,62 @@
+---
+title: Field
+description: Label, control, description and error as one unit — vertical or horizontal.
+---
+
+import FieldBasic from "@/examples/field/basic";
+import FieldHorizontal from "@/examples/field/horizontal";
+
+<Install name="field" />
+
+## Vertical
+
+<Preview name="field/basic">
+  <FieldBasic />
+</Preview>
+
+## Horizontal
+
+The orientation for toggles: text on the left, control on the right.
+
+<Preview name="field/horizontal">
+  <FieldHorizontal />
+</Preview>
+
+## Invalid state
+
+`data-invalid` on the `Field` turns the whole group destructive, and
+`FieldError` renders nothing at all when it has no children — so you can leave
+it in the tree unconditionally:
+
+```tsx
+<Field data-invalid={!!errors.stock}>
+  <FieldLabel htmlFor="stock">Stock</FieldLabel>
+  <Input id="stock" aria-invalid={!!errors.stock} />
+  <FieldError>{errors.stock}</FieldError>
+</Field>
+```
+
+## Parts
+
+| Part | What it does |
+|---|---|
+| `FieldSet` / `FieldLegend` | Native `fieldset` and `legend`, for genuinely grouped inputs. |
+| `FieldGroup` | Stacks fields with consistent spacing. |
+| `Field` | One field. `orientation="vertical" \| "horizontal"`. |
+| `FieldContent` | Wraps title + description in the horizontal orientation. |
+| `FieldLabel` | A [`Label`](/docs/components/label) that participates in the field's disabled state. |
+| `FieldTitle` | Label-weight text that is not a `<label>` — for a row whose control is not focusable by label click. |
+| `FieldDescription` | Muted helper text. |
+| `FieldError` | Destructive text with `role="alert"`. Renders `null` when empty. |
+| `FieldSeparator` | A rule between groups, optionally with a centred word. |
+
+<Callout type="warn">
+  `Field` uses `has-[>[data-slot=field-content]]:items-start` for horizontal
+  alignment, which compiles to `:has()` — absent in Chromium 103. In game a
+  horizontal field with a tall description centres its control instead of
+  top-aligning it. Cosmetic, but worth knowing before you file it as a bug.
+</Callout>
+
+## Files
+
+<ItemFiles name="field" />

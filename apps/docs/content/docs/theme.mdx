@@ -1,0 +1,96 @@
+---
+title: Theme
+description: OKLCH tokens for both palettes, the primary ramp, the radius scale, and the base rules that make a page behave like a NUI.
+---
+
+import ThemeTokens from "@/examples/theme/tokens";
+import ThemeToggle from "@/examples/theme/toggle";
+
+<Install name="theme" />
+
+## Tokens
+
+Two complete palettes. `:root` is light, `.dark` is dark — and `.dark` is what
+ships, because every component was drawn against it first.
+
+<Preview name="theme/tokens" center={false}>
+  <ThemeTokens />
+</Preview>
+
+Toggle this page between light and dark to watch the semantic tokens move and
+the ramp stay put.
+
+## The dark variant is class-driven
+
+```css
+@custom-variant dark (&:where(.dark, .dark *));
+```
+
+Without this line every `dark:` utility in your codebase keys off the player's
+**OS** theme, which is neither what you want nor something the UI can control.
+With it, the `.dark` class on `<html>` drives everything —
+[`useTheme`](/docs/nui/use-theme) is what puts it there.
+
+## Why light mode uses a different gold
+
+The dark palette's brand accent is a bright gold at `oklch(0.9089 0.1361 99.99)`.
+On white that is unreadable as text and washes out as a fill. So light mode uses
+a single deeper amber, `oklch(0.58 0.135 80)`, chosen to work both as
+`bg-primary` with dark text *and* as `text-primary` on white.
+
+That is why roughly forty `text-primary` usages across the scripts need no
+per-file light-mode handling — the token absorbs it.
+
+## The ramp
+
+`--color-primary-50` through `--color-primary-950` are **theme-agnostic**:
+identical values in both palettes, for cases where you want a specific step
+rather than a semantic role.
+
+<Callout type="warn" title="The ramp has no custom properties">
+  The ramp lives in `@theme inline`, so Tailwind inlines the values into
+  utilities instead of emitting variables. `var(--color-primary-500)` resolves to
+  nothing. Use the generated utilities — `bg-primary-500`, `text-primary-300` —
+  and spell them out in full so the class scanner can see them.
+</Callout>
+
+## Radius
+
+`--radius` is `0.625rem`, with `sm` / `md` / `lg` / `xl` derived from it. Change
+the base and every component follows.
+
+## Base rules
+
+The theme also carries the rules that make a page behave like a NUI rather than
+a web page:
+
+```css
+html, body {
+  height: 100vh;
+  overflow: hidden;
+  background-color: transparent;  /* the game shows through */
+  font-family: 'Poppins', sans-serif !important;
+}
+
+:focus, :focus-visible { outline: none; }   /* pointer-driven UI */
+```
+
+Plus `scrollbar-none`, `scrollbar-mini` and `scrollbar-mini-absolute` utilities,
+and a `* { border-color: var(--border) }` default.
+
+If you render the same bundle outside CEF, override the first block afterwards.
+
+## Theme toggle
+
+<Preview name="theme/toggle">
+  <ThemeToggle />
+</Preview>
+
+The icon crossfades sun to moon and spins on hover. In a script, wire it to
+[`useTheme`](/docs/nui/use-theme) rather than local state.
+
+<Callout type="warn" title="Locked">
+  `bunx 9am-ui check` **fails the build** if `9am-theme.css` differs from the
+  registry. Identical tokens across every script is the whole point. To change
+  it, change it here and release it — see the [drift policy](/docs/drift-policy).
+</Callout>

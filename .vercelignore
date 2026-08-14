@@ -1,0 +1,7 @@
+# The build needs the repo root (apps/docs imports out of registry/), so the
+# whole repo is uploaded. Keep out the parts the docs build never reads.
+node_modules
+apps/preview/dist
+apps/docs/.next
+apps/docs/.source
+.github

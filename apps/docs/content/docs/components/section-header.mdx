@@ -1,0 +1,55 @@
+---
+title: Section Header
+description: The title row every 9AM subpage opens with — icon chip, name in Phudu, optional action on the right.
+---
+
+import SectionHeaderBasic from "@/examples/section-header/basic";
+
+<Install name="section-header" />
+
+## Example
+
+Hover the row, not the icon — the animation belongs to the whole header.
+
+<Preview name="section-header/basic">
+  <SectionHeaderBasic />
+</Preview>
+
+## Inside a viewport header
+
+Drop it inside a `ViewportTitle` so it inherits the header's blur-swap on
+scroll:
+
+```tsx
+<ViewportHeader>
+  <ViewportTitle>
+    <SectionHeader
+      icon={<UsersIcon ref={iconRef} size={20} className="text-primary" />}
+      title={t("ui.players.title")}
+      onMouseEnter={() => iconRef.current?.startAnimation()}
+      action={<Button>…</Button>}
+    />
+  </ViewportTitle>
+</ViewportHeader>
+```
+
+## Why `icon` is a node
+
+The kit's icons animate through an imperative handle, so the caller has to keep
+the ref. Taking a component type instead would mean either owning the ref in
+here — and losing the ability to fire it from a parent hover — or threading a
+callback back out. A node is simpler and puts the trigger where it belongs.
+
+## API
+
+<TypeTable
+  type={{
+    title: { description: "The page name. Rendered in Phudu at 2xl.", type: "ReactNode" },
+    icon: { description: "Rendered inside a bordered chip to the left of the title.", type: "ReactNode" },
+    action: { description: "Pinned to the right of the row.", type: "ReactNode" },
+  }}
+/>
+
+## Files
+
+<ItemFiles name="section-header" />

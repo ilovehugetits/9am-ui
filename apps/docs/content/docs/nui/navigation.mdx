@@ -1,0 +1,61 @@
+---
+title: Navigation
+description: Which top-level page the NUI is showing, when Lua is the one deciding.
+---
+
+<Install name="navigation" />
+
+## You probably do not need this
+
+For a script with one screen and a row of tabs, local state is enough:
+
+```tsx
+const [tab, setTab] = React.useState("overview");
+```
+
+Reach for this when **Lua** decides what opens — a catalog from one interaction,
+a dashboard from another, a HUD from a third — so the client can send `setPage`
+and land the player in the right place.
+
+## Usage
+
+```tsx
+<NavigationProvider>
+  <App />
+</NavigationProvider>
+```
+
+```tsx
+type Page = "catalog" | "dashboard" | "hud";
+
+const page = useNavigation().currentPage as Page;
+```
+
+Page ids are plain strings; each script declares its own union. The store starts
+at `""`, so render a fallback until Lua names a page.
+
+## From Lua
+
+```lua
+SendReactMessage('setPage', 'dashboard')
+SetNuiVisible(true)
+```
+
+Send the page **before** making the frame visible, so the correct screen is
+already mounted when it fades in.
+
+## Pairing with PageTransition
+
+`currentPage` is exactly the `pageKey` that
+[`PageTransition`](/docs/components/page-transition) wants:
+
+```tsx
+<PageTransition pageKey={page}>
+  {page === "catalog" && <Catalog />}
+  {page === "dashboard" && <Dashboard />}
+</PageTransition>
+```
+
+## Files
+
+<ItemFiles name="navigation" />

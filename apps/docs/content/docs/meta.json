@@ -1,0 +1,22 @@
+{
+  "title": "Docs",
+  "pages": [
+    "index",
+    "---Getting started---",
+    "getting-started",
+    "---Design language---",
+    "theme",
+    "components",
+    "---Runtime---",
+    "nui",
+    "lib",
+    "---Shipping a script---",
+    "cef",
+    "scaffolds",
+    "drift-policy",
+    "releasing",
+    "cli",
+    "---Reference---",
+    "registry"
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "title": "Scaffolds",
+  "icon": "FolderTree",
+  "pages": ["scaffold", "dashboard-scaffold"]
+}

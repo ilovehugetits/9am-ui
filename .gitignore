@@ -7,3 +7,13 @@ dist/
 !.env.example
 bun.lock.tmp
 apps/preview/dist/
+
+# docs
+apps/docs/.next
+apps/docs/.source
+apps/docs/lib/data.generated.ts
+apps/docs/next-env.d.ts
+apps/docs/.vercel
+apps/docs/tsconfig.tsbuildinfo
+
+.vercel

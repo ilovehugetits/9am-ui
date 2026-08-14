@@ -1,0 +1,54 @@
+---
+title: Stat Card
+description: A headline metric — icon chip, label, big Phudu number, optional trend line.
+---
+
+import StatCardBasic from "@/examples/stat-card/basic";
+
+<Install name="stat-card" />
+
+## Example
+
+<Preview name="stat-card/basic" center={false}>
+  <StatCardBasic />
+</Preview>
+
+## The trend is a whole sentence
+
+`trend.label` is the finished, already-translated string. The card decides the
+arrow and the colour from the **sign** of `trend.percent`, but it never builds
+the text:
+
+```tsx
+trend={{
+  percent: 12.5,
+  label: t("ui.overview.fromLastWeek", { percent: "12.5%" }),
+}}
+```
+
+Pluralisation, word order and where the sign goes are the locale's business.
+A component that assembled `"+" + percent + "% " + t("fromLastWeek")` would be
+correct in English and wrong in most other languages.
+
+The magnitude is unused — only the sign matters. Positive takes
+`TrendingUpIcon` in primary, negative takes `TrendingDownIcon` in red, and
+exactly zero is muted with the up arrow.
+
+## API
+
+<TypeTable
+  type={{
+    label: { description: "The metric name. Phudu, 2xl.", type: "ReactNode" },
+    value: { description: "The number. Phudu, 2xl, bold.", type: "ReactNode" },
+    icon: { description: "Rendered inside a filled chip on the left.", type: "ReactNode" },
+    trend: {
+      description:
+        "Optional trend line. percent picks the arrow and colour; label is the whole sentence.",
+      type: "{ percent: number; label: ReactNode }",
+    },
+  }}
+/>
+
+## Files
+
+<ItemFiles name="stat-card" />

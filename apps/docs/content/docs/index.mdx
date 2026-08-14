@@ -1,0 +1,75 @@
+---
+title: Introduction
+description: The shared design language, NUI plumbing and FiveM CEF workarounds behind every 9AM Studios script.
+---
+
+import AppShellBasic from "@/examples/app-shell/basic";
+import { Scaled } from "@/components/scaled";
+
+9AM UI is the UI layer every 9AM Studios script is built on. It is distributed as a
+**[shadcn registry](https://ui.shadcn.com/docs/registry)**: components are
+copied into each script rather than imported from a package, so a script can diverge
+when it genuinely needs to — while [`9am-ui check`](/docs/drift-policy) makes sure
+nobody diverges by accident.
+
+It was extracted from `9am-vehicleshop` v1.2.8, which is consumer #0.
+
+<Preview name="app-shell/basic" center={false} className="p-4">
+  <Scaled width={1280} height={720}>
+    <AppShellBasic />
+  </Scaled>
+</Preview>
+
+Everything above is live: real components out of `registry/`, the same files
+`shadcn add` copies into a script. Switch tabs, scroll the panel, drag its
+scrollbar.
+
+## Why a registry and not a package
+
+A FiveM script ships as a folder on someone else's server. There is no install
+step a customer runs, no lockfile to resolve, and — for escrowed builds — no
+practical way to patch a dependency after the fact. A package would mean every
+script carrying a version of the kit it can never update in place.
+
+Copying the source in instead means each script owns its UI outright. The cost
+is drift, and drift is what the [drift policy](/docs/drift-policy) and
+`9am-ui check` exist to bound: the theme is locked and fails CI if it changes,
+components warn but are allowed to diverge, and `nui.config.ts` is expected to.
+
+## What's in it
+
+<Cards>
+  <Card title="Theme" href="/docs/theme" description="OKLCH tokens for both palettes, the primary-50…950 ramp, radius scale and the NUI base rules. Locked." />
+  <Card title="Components" href="/docs/components" description="Primitives drawn against the 9AM palette — from button to the viewport that carries the CEF workarounds." />
+  <Card title="Icons" href="/docs/components/icons" description="Hand-built animated SVGs with an imperative handle, so a tab or a table row can drive them. No icon library." />
+  <Card title="NUI" href="/docs/nui/nui" description="fetchNui, useNuiEvent, frame visibility with ESC release, the theme store and runtime i18n pulled from Lua." />
+  <Card title="Scaffolds" href="/docs/scaffolds/scaffold" description="A whole new script's UI — vite, tsconfig, entry point, starter App — plus the Lua side." />
+  <Card title="CLI" href="/docs/cli" description="check, doctor, lua and fonts. Wire check into CI; run doctor when something renders in the browser but not in game." />
+</Cards>
+
+<Callout title="Free to use">
+  The registry is public and MIT licensed — no token, no account. Add the `@9am`
+  entry to `components.json` and `shadcn add` works.
+  See [Installation](/docs/getting-started/installation).
+</Callout>
+
+## The two pieces that matter most
+
+[`@9am/viewport`](/docs/components/viewport) is the house scroll container: a
+draggable custom scrollbar, layered liquid-glass edge blur, and a header that
+blur-swaps to a sticky copy as you scroll. It also carries the CEF-103
+workarounds — `clipPath` instead of `overflow` plus radius, stacked fixed-blur
+bands because `mask` does not apply to `backdrop-filter` output, and
+JS-computed grid columns because `:has()` and `@container` do not exist in
+Chromium 103.
+
+[`@9am/smooth-scroll`](/docs/lib/smooth-scroll) exists because CEF will not
+wheel-scroll a `clip-path`'d container at all. Without it the viewport is
+unscrollable in game while working perfectly in your browser.
+
+## Start here
+
+<Cards>
+  <Card title="Install into a new script" href="/docs/getting-started/new-script" description="Scaffold the web and Lua sides from nothing." />
+  <Card title="Install into an existing script" href="/docs/getting-started/existing-script" description="Add the registry to a components.json you already have." />
+</Cards>

@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "version": "1.0.0",
-  "description": "9AM Studios internal UI kit — the shared design language, NUI plumbing and FiveM CEF workarounds behind every 9AM script.",
+  "workspaces": ["apps/docs"],
+  "description": "The shared design language, NUI plumbing and FiveM CEF workarounds behind every 9AM Studios script — an open shadcn registry.",
   "bin": {
     "9am-ui": "cli/index.ts"
   },
@@ -21,9 +22,10 @@
     "check": "bun cli/index.ts check",
     "doctor": "bun cli/index.ts doctor",
     "typecheck": "tsc --noEmit",
+    "docs": "bun run --cwd apps/docs dev",
+    "docs:build": "bun run --cwd apps/docs build",
     "preview": "vite --config apps/preview/vite.config.ts",
-    "preview:build": "vite build --config apps/preview/vite.config.ts",
-    "lint": "eslint registry apps cli"
+    "preview:build": "vite build --config apps/preview/vite.config.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.21",

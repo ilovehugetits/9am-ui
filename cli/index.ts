@@ -157,13 +157,18 @@ function doctor(dir: string): never {
   const registries = (c.components as { registries?: Record<string, { url?: string; headers?: Record<string, string> }> }).registries;
   const reg = registries?.["@9am"];
   if (!reg?.url) {
-    bad("components.json has no @9am registry", 'add "registries": { "@9am": { "url": "...", "headers": {...} } }');
+    bad("components.json has no @9am registry", 'add "registries": { "@9am": { "url": "https://raw.githubusercontent.com/ilovehugetits/9am-ui/main/r/{name}.json" } }');
   } else {
     ok(`@9am registry -> ${reg.url}`);
+    // The registry is public, so headers are optional. One that references an
+    // unset variable is still worth flagging: shadcn would send an empty
+    // `Bearer `, and GitHub rejects a malformed credential rather than falling
+    // back to an anonymous read.
     const tokenRef = JSON.stringify(reg.headers ?? {}).match(/\$\{(\w+)\}/)?.[1];
-    if (!tokenRef) bad("@9am registry has no auth header", "a private repo needs Authorization: Bearer ${TOKEN}");
-    else if (!process.env[tokenRef]) bad(`${tokenRef} is not set in this shell`, `export ${tokenRef}=<github PAT with repo:read>`);
-    else ok(`${tokenRef} is set`);
+    if (!tokenRef) ok("no auth header needed — the registry is public");
+    else if (!process.env[tokenRef]) {
+      bad(`components.json sends Authorization from \${${tokenRef}}, which is not set in this shell`, `export ${tokenRef}=<github PAT>, or drop "headers" — the registry is public`);
+    } else ok(`${tokenRef} is set`);
   }
 
   const cssPath = path.join(c.root, c.srcDir, "index.css");
@@ -307,7 +312,7 @@ if (cmd === "fonts") fonts(dir);
 console.log(`9am-ui — companion CLI for the 9AM UI registry
 
   ${GRN}check${RST}   [--dir <web>]   compare installed kit files against the registry
-  ${GRN}doctor${RST}  [--dir <web>]   verify registry auth, theme import and CEF css setup
+  ${GRN}doctor${RST}  [--dir <web>]   verify the registry, theme import and CEF css setup
   ${GRN}lua${RST}     [--dir <root>]  write the Lua half of the scaffold [--force]
   ${GRN}fonts${RST}   [--dir <web>]   write linked woff2 + css for multi-entry apps
 `);

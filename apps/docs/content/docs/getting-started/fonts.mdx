@@ -1,0 +1,52 @@
+---
+title: Fonts
+description: Poppins and Phudu, embedded as base64 or linked as woff2 — and why the theme refuses to choose for you.
+---
+
+`9am-theme.css` deliberately does **not** import a font stylesheet. Which one
+you want depends on your app, and it is not a decision the theme can make for
+you.
+
+| | Use when | How |
+|---|---|---|
+| **`@9am/fonts`** (base64) | Single HTML entry — the common case | `bunx shadcn@latest add @9am/fonts` |
+| **Linked woff2** | Several HTML entries, especially DUI texture pages | `bunx 9am-ui fonts`, then import `9am-fonts-linked.css` |
+
+Then import one of them from your entry stylesheet, above the theme:
+
+```css title="src/index.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./styles/9am-fonts.css";
+@import "./styles/9am-theme.css";
+```
+
+## Why embedding is the default
+
+One command, nothing else to fetch, and in a NUI everything is served off local
+disk — so there is no network round-trip to save by linking.
+
+## Why it stops being the default
+
+**Every DUI is its own CEF instance.** A script with a main NUI, a phone and a
+showroom stand has three separate browser contexts, and each one would decode
+the entire 322 KB base64 payload with nothing shared between them.
+
+`9am-vehicleshop` is the worked example: three entries, and `client/showroom.lua`
+calls `CreateDui` once per showroom slot — so it uses the linked variant
+everywhere.
+
+## The faces
+
+**Poppins** carries body text at 400/500/600/700. **Phudu** is the display face,
+600/700, used for headings, stat values and anything in `!font-[phudu]`.
+
+Both are locked. `bunx 9am-ui check` hard-fails if `9am-fonts.css` drifts, for
+the same reason it fails on the theme: identical type across every script is
+what makes them read as siblings.
+
+<Callout>
+  This documentation site uses the linked variant — it is a multi-page web app
+  served over HTTP with a cache, which is precisely the case where embedding is
+  the wrong trade.
+</Callout>

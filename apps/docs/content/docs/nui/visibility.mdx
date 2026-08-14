@@ -1,0 +1,65 @@
+---
+title: Visibility
+description: Show and hide the NUI frame, with Escape handling and focus release back to the game.
+---
+
+<Install name="visibility" />
+
+## Usage
+
+Wrap the app once, in `main.tsx`:
+
+```tsx
+<VisibilityProvider>
+  <App />
+</VisibilityProvider>
+```
+
+Then read it anywhere:
+
+```tsx
+const { visible, setVisible } = useVisibility();
+```
+
+Lua drives it with `SendNUIMessage({ action = "setVisible", data = true })`.
+
+## It hides with opacity, not unmount
+
+```tsx
+visible
+  ? "opacity-100 transition-… duration-200 ease-out"
+  : "opacity-0 scale-[1.02] pointer-events-none invisible transition-… ease-in";
+```
+
+The tree stays mounted. That keeps state, scroll positions and any data already
+fetched, so reopening the menu is instant rather than re-fetching everything
+from Lua — which matters when a player opens and closes a shop menu three times
+in ten seconds.
+
+`invisible` is in the exit transition list so the element only becomes
+non-hittable after the fade finishes, and `pointer-events-none` makes sure a
+mid-fade frame cannot swallow a click meant for the game.
+
+## Escape
+
+The provider listens on `window` for Escape and calls `fetchNui("hideFrame")` so
+**Lua** closes the frame and releases NUI focus. In the browser, where there is
+no Lua to ask, it just toggles the store so you can test the hidden state.
+
+Releasing focus is the point. Setting `visible = false` from JS alone leaves the
+game with `SetNuiFocus(true)` and the player unable to move.
+
+<Callout type="warn">
+  Radix stops Escape propagation while a dialog or popover is open, so those
+  close first and the frame stays. If you add your own Escape handler, check
+  `event.defaultPrevented` before acting.
+</Callout>
+
+## The Lua side
+
+`bunx 9am-ui lua` writes a `SetNuiVisible` helper and the `hideFrame` callback
+that pairs with this. See [Scaffold](/docs/scaffolds/scaffold).
+
+## Files
+
+<ItemFiles name="visibility" />

@@ -1,0 +1,5 @@
+{
+  "title": "NUI",
+  "icon": "Radio",
+  "pages": ["nui", "visibility", "use-theme", "navigation", "i18n"]
+}

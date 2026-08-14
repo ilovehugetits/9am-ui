@@ -1,0 +1,97 @@
+---
+title: Existing script
+description: Add the registry to a script that already has a UI, and take only the parts you want.
+---
+
+## Add the registry
+
+Put the `registries` block in the `components.json` you already have:
+
+```json title="components.json"
+{
+  "registries": {
+    "@9am": {
+      "url": "https://raw.githubusercontent.com/ilovehugetits/9am-ui/main/r/{name}.json"
+    }
+  }
+}
+```
+
+Then take what you want:
+
+```bash
+bunx shadcn@latest add @9am/theme @9am/viewport @9am/data-table
+```
+
+## Import the theme
+
+After adding `@9am/theme`, import it from your entry stylesheet:
+
+```css title="src/index.css"
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./styles/9am-fonts.css"; /* or 9am-fonts-linked.css — see Fonts */
+@import "./styles/9am-theme.css";
+```
+
+Order matters. `9am-theme.css` declares `@custom-variant dark` and a
+`@theme inline` block, both of which Tailwind has to see after its own import.
+
+## Things that will surprise you
+
+<Accordions>
+
+<Accordion title="The theme sets html/body to transparent and non-scrolling">
+
+`9am-theme.css` is written for a CEF overlay composited over the game:
+
+```css
+html, body {
+  height: 100vh;
+  overflow: hidden;
+  background-color: transparent;
+}
+```
+
+That is correct for a NUI and wrong for anything else. If you are running the
+same bundle as a normal web page, override it *after* the import — this docs
+site does exactly that.
+
+</Accordion>
+
+<Accordion title="Focus outlines are suppressed globally">
+
+```css
+:focus, :focus-visible { outline: none; }
+```
+
+A game NUI is pointer-driven and a stray Tab ring reads as a rendering bug. If
+part of your UI is keyboard-driven, put the ring back yourself for that subtree.
+
+</Accordion>
+
+<Accordion title="Your aliases have to match">
+
+Every copied component imports through `@/components/ui/*`, `@/lib/utils`,
+`@/hooks/*`, `@/utils/*`, `@/providers/*` and `@/i18n`. If your project uses
+different aliases, either map them in `tsconfig.json` and your bundler, or
+accept a find-and-replace on every `shadcn add`.
+
+</Accordion>
+
+<Accordion title="Icons and primitives land in the same directory">
+
+In a consumer project `@9am/button` and `@9am/icon-users` both write to
+`components/ui/`. They are only kept apart in this repo for legibility.
+
+</Accordion>
+
+</Accordions>
+
+## Before you ship
+
+Two non-negotiables for CEF — the [FiveM CEF](/docs/cef) page covers both, and
+`bunx 9am-ui doctor` checks them:
+
+1. `postcss.config.js` must keep `postcss-color-converter`.
+2. `installSmoothScroll()` must run in `main.tsx`.

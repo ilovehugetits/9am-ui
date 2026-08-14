@@ -1,0 +1,48 @@
+---
+title: Tooltip
+description: Hover explanation with no delay.
+---
+
+import TooltipBasic from "@/examples/tooltip/basic";
+
+<Install name="tooltip" />
+
+## Example
+
+<Preview name="tooltip/basic">
+  <TooltipBasic />
+</Preview>
+
+## No provider needed
+
+`Tooltip` wraps itself in a `TooltipProvider` with `delayDuration={0}`, so a
+single tooltip needs no setup. `TooltipProvider` is still exported for the case
+where you want one delay shared across a whole screen — wrap that subtree and
+the nested providers inherit nothing, so set the delay where you mean it.
+
+Zero delay is deliberate. A tooltip that waits 700ms is a tooltip nobody sees
+when the pointer is moving over a game.
+
+## Prefer InfoTip and Tip
+
+For the two common shapes, [`@9am/info-tip`](/docs/components/info-tip) is less
+to write: `InfoTip` renders the "?" glyph and its tooltip together, and `Tip`
+wraps an existing control in one.
+
+Reach for the primitives here when you need something neither of those covers.
+
+## Disabled triggers
+
+A disabled button swallows pointer events, so the tooltip never opens. Wrap it:
+
+```tsx
+<TooltipTrigger asChild>
+  <span className="inline-flex">
+    <Button disabled>Delete</Button>
+  </span>
+</TooltipTrigger>
+```
+
+## Files
+
+<ItemFiles name="tooltip" />

@@ -1,0 +1,60 @@
+---
+title: Chart
+description: Recharts wrapped in the 9AM palette, with a config object that turns series keys into CSS variables.
+---
+
+import ChartArea from "@/examples/chart/area";
+import ChartBar from "@/examples/chart/bar";
+
+<Install name="chart" />
+
+## Area
+
+<Preview name="chart/area" center={false}>
+  <ChartArea />
+</Preview>
+
+## Bar
+
+<Preview name="chart/bar" center={false}>
+  <ChartBar />
+</Preview>
+
+## The config object
+
+`ChartContainer` takes a `config` keyed by series name, and emits a scoped
+stylesheet defining `--color-<key>` for each one:
+
+```tsx
+const config = {
+  sales: { label: "Sales", color: "var(--chart-1)" },
+  returns: { label: "Returns", color: "var(--chart-3)" },
+} satisfies ChartConfig;
+```
+
+Which is why the marks reference `var(--color-sales)` rather than the token
+directly. The indirection is what lets the tooltip and legend look up a label
+and a swatch from the same key the chart is drawn with.
+
+Five chart tokens ship with [the theme](/docs/theme), `--chart-1` through
+`--chart-5`, tuned per palette.
+
+## Parts
+
+`ChartContainer`, `ChartTooltip`, `ChartTooltipContent`, `ChartLegend`,
+`ChartLegendContent`, `ChartStyle`, and the `ChartConfig` type.
+
+`ChartContainer` renders a Recharts `ResponsiveContainer`, so it needs a sized
+parent — `aspect-video` is the default, overridable with `className`.
+
+<Callout type="warn">
+  Recharts measures its container on mount. Inside a
+  [`PageTransition`](/docs/components/page-transition) the incoming page mounts
+  at `scale(0.995)`, which is close enough not to matter — but inside anything
+  that mounts at zero size (a collapsed accordion, a hidden tab panel), the chart
+  will render 0×0 and stay that way. Mount it only when its panel is visible.
+</Callout>
+
+## Files
+
+<ItemFiles name="chart" />

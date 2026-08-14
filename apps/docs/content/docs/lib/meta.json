@@ -1,0 +1,5 @@
+{
+  "title": "Lib",
+  "icon": "Wrench",
+  "pages": ["utils", "smooth-scroll"]
+}

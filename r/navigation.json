@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "navigation",
+  "title": "Navigation Provider",
+  "description": "Top-level page store driven by the `setPage` message, for scripts where Lua decides which screen opens. A single screen with tabs does not need it.",
+  "dependencies": [
+    "zustand@^5.0.14"
+  ],
+  "registryDependencies": [
+    "@9am/nui"
+  ],
+  "files": [
+    {
+      "path": "registry/nui/NavigationProvider.tsx",
+      "content": "import React from \"react\"\nimport { create } from \"zustand\"\n\nimport { useNuiEvent } from \"@/hooks/useNuiEvent\"\n\n/**\n * Which top-level page the NUI is showing.\n *\n * For a script with one screen and a row of tabs, local state is enough and\n * you do not need this. Reach for it when Lua decides what opens — a catalog\n * from one interaction, a dashboard from another, a HUD from a third — so the\n * client can send `setPage` and land the player in the right place.\n *\n * Page ids are plain strings; each script declares its own union:\n *\n * ```ts\n * type Page = \"catalog\" | \"dashboard\" | \"hud\"\n * const page = useNavigation().currentPage as Page\n * ```\n *\n * From Lua:\n *\n * ```lua\n * SendReactMessage('setPage', 'dashboard')\n * SetNuiVisible(true)\n * ```\n */\ninterface NavigationStore {\n  currentPage: string\n  setCurrentPage: (page: string) => void\n}\n\nexport const useNavigationStore = create<NavigationStore>((set) => ({\n  currentPage: \"\",\n  setCurrentPage: (page: string) => set({ currentPage: page }),\n}))\n\nexport const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {\n  const setCurrentPage = useNavigationStore((s) => s.setCurrentPage)\n\n  useNuiEvent<string>(\"setPage\", setCurrentPage)\n\n  return <>{children}</>\n}\n\nexport const useNavigation = () => useNavigationStore()\n",
+      "type": "registry:file",
+      "target": "src/providers/NavigationProvider.tsx"
+    }
+  ],
+  "type": "registry:file"
+}

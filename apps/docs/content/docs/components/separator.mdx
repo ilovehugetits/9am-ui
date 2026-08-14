@@ -1,0 +1,46 @@
+---
+title: Separator
+description: A one-pixel rule, horizontal or vertical.
+---
+
+import SeparatorBasic from "@/examples/separator/basic";
+
+<Install name="separator" />
+
+## Example
+
+<Preview name="separator/basic">
+  <SeparatorBasic />
+</Preview>
+
+A vertical separator takes its height from the flex row it sits in, so the row
+needs a height — `h-5` in the example above.
+
+## Not a Radix primitive
+
+This one is a plain `div` rather than `@radix-ui/react-separator`. It renders
+`role="none"` when decorative and `role="separator"` with `aria-orientation`
+when not, which is the whole of what the primitive was providing — and one
+fewer package in a bundle that ships to a game client.
+
+## API
+
+<TypeTable
+  type={{
+    orientation: {
+      description: "Which way the rule runs.",
+      type: '"horizontal" | "vertical"',
+      default: '"horizontal"',
+    },
+    decorative: {
+      description:
+        "Purely visual. Set false when the rule genuinely separates content for a screen reader.",
+      type: "boolean",
+      default: "true",
+    },
+  }}
+/>
+
+## Files
+
+<ItemFiles name="separator" />

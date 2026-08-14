@@ -3,14 +3,12 @@
  * 9am-ui — drift check for a script using the 9AM UI registry.
  *
  *   bun src/scripts/9am-ui.mjs check    compare installed kit files to the registry
- *   bun src/scripts/9am-ui.mjs doctor   verify auth, theme import and CEF css setup
+ *   bun src/scripts/9am-ui.mjs doctor   verify the registry, theme import and CEF css setup
  *
- * Zero dependencies, and deliberately NOT a package. Bun resolves `github:` and
- * `git+https:` dependencies through the GitHub tarball API, which 404s on a
- * private repo unless you hand it a second set of credentials — so making this
- * an installable dep would mean every developer and CI job configuring auth
- * twice. Instead it ships through the registry like any other item and reuses
- * the token already in components.json.
+ * Zero dependencies, and deliberately NOT a package: it ships through the
+ * registry like any other item, so `shadcn add @9am/tools` is the only install
+ * channel a script ever needs and the tool version tracks the kit version it
+ * was pulled with.
  *
  * Enforcement is asymmetric on purpose. Identical tokens are what make the
  * scripts read as siblings, so theme/font drift fails. A component tweaked
@@ -79,7 +77,7 @@ const itemUrl = (name) => cfg.url.replace("{name}", name);
 
 async function fetchItem(name) {
   const res = await fetch(itemUrl(name), { headers: cfg.headers });
-  if (!res.ok) throw new Error(`${name}: HTTP ${res.status}${res.status === 404 ? " (bad token, or item does not exist)" : ""}`);
+  if (!res.ok) throw new Error(`${name}: HTTP ${res.status}${res.status === 404 ? " (no such item)" : ""}`);
   return res.json();
 }
 
@@ -157,14 +155,22 @@ async function doctor() {
   console.log(`${DIM}9am-ui doctor — ${ROOT}${RST}\n`);
 
   ok(`@9am registry -> ${cfg.url}`);
-  if (!cfg.tokenName) bad("@9am registry has no auth header", "a private repo needs Authorization: Bearer ${TOKEN}");
-  else if (!process.env[cfg.tokenName]) bad(`${cfg.tokenName} is not set in this shell`, `export ${cfg.tokenName}=<github PAT with read access to 9am-ui>`);
-  else {
+  // The registry is public, so no token is required. A components.json that
+  // still carries an Authorization header is not an error — but the variable
+  // it names has to resolve, because an empty `Bearer ` is worse than sending
+  // nothing at all: GitHub rejects the malformed credential instead of
+  // treating the request as anonymous.
+  if (cfg.tokenName && !process.env[cfg.tokenName]) {
+    bad(
+      `components.json sends Authorization from \${${cfg.tokenName}}, which is not set in this shell`,
+      `export ${cfg.tokenName}=<github PAT>, or drop "headers" entirely — the registry is public`,
+    );
+  } else {
     try {
       await fetchItem("registry");
-      ok(`${cfg.tokenName} is set and the registry is reachable`);
+      ok("registry is reachable");
     } catch (e) {
-      bad(`registry unreachable — ${e.message}`, "check the token has read access to ilovehugetits/9am-ui");
+      bad(`registry unreachable — ${e.message}`, "check your network and that the @9am url is spelled correctly");
     }
   }
 
@@ -206,7 +212,7 @@ if (!run) {
   console.log(`9am-ui — drift check for the 9AM UI registry
 
   ${GRN}check${RST}   [--dir <web>]   compare installed kit files against the registry
-  ${GRN}doctor${RST}  [--dir <web>]   verify auth, theme import and CEF css setup
+  ${GRN}doctor${RST}  [--dir <web>]   verify the registry, theme import and CEF css setup
 
 Setup commands (lua scaffold, linked fonts) live in the 9am-ui repo itself:
   bun <path-to-9am-ui>/cli/index.ts lua|fonts

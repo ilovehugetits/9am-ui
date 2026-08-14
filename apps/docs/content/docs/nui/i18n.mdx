@@ -1,0 +1,86 @@
+---
+title: i18n
+description: Runtime translations pulled from Lua, so customers can edit locale files in an escrowed build.
+---
+
+<Install name="i18n" />
+
+## Translations are not bundled
+
+They live in the resource's `locales/<lang>.json` — customer-editable even in an
+escrow build, which they would not be if they were compiled into the JS bundle.
+On boot the app pulls the dictionary from Lua through the `getLocale` callback.
+Lua has already merged the active language over English, so fallback is resolved
+before it reaches the UI.
+
+## Boot it once
+
+```tsx title="src/main.tsx"
+import { initI18n } from "@/i18n";
+
+initI18n(() => import("../../locales/en.json"));
+```
+
+The argument is only used in browser dev mode, where there is no Lua to ask. The
+kit deliberately does not hardcode the path to your locales — `main.tsx` is what
+knows where they live. Wrap the call in `__DEV_SEED__` if you want the chunk
+stripped from production builds entirely.
+
+## Using it
+
+Inside components, use the reactive form so the tree re-renders when the
+dictionary arrives:
+
+```tsx
+const t = useT();
+
+<span>{t("ui.dashboard.stock.title")}</span>
+<span>{t("ui.catalog.priceFrom", { price: "50,000" })}</span>
+```
+
+Outside components — event handlers, toasts, non-React modules — import the
+plain `t`.
+
+<Callout type="warn" title="Never call t at module scope">
+  The dictionary loads asynchronously, so a module-level `const TITLE = t("…")`
+  captures the key before anything is loaded and never updates. Turn static
+  string constants into functions, or store the key and translate where it is
+  displayed.
+</Callout>
+
+## Resolution order
+
+1. The dictionary from Lua.
+2. `KIT_DEFAULTS` — English strings for the kit's own components.
+3. The key itself.
+
+Step 2 is why a freshly scaffolded script renders "No results." rather than the
+raw string `ui.common.noResults`. Copy `KIT_DEFAULTS` into your `locales/en.json`
+if you want those localised; the dictionary from Lua always wins.
+
+```json
+{
+  "ui": {
+    "common": {
+      "close": "Close",
+      "searchPlaceholder": "Search...",
+      "noResults": "No results.",
+      "noResultsFound": "No results found",
+      "selectPlaceholder": "Select...",
+      "nSelected": "{count} selected",
+      "rowCount": "{count} row(s)",
+      "pageOf": "Page {page} of {total}"
+    }
+  }
+}
+```
+
+## Interpolation
+
+`{name}` placeholders, replaced from the `vars` object. Anything unmatched is
+left as-is rather than blanked, so a typo shows up as `{cout}` in the UI instead
+of silently disappearing.
+
+## Files
+
+<ItemFiles name="i18n" />

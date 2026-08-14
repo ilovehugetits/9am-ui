@@ -1,0 +1,61 @@
+---
+title: Tabs
+description: Two variants — a pill group, and the underlined line variant the dashboard header uses.
+---
+
+import TabsBasic from "@/examples/tabs/basic";
+import TabsLine from "@/examples/tabs/line";
+import TabsVertical from "@/examples/tabs/vertical";
+
+<Install name="tabs" />
+
+## Default
+
+<Preview name="tabs/basic">
+  <TabsBasic />
+</Preview>
+
+## Line
+
+<Preview name="tabs/line">
+  <TabsLine />
+</Preview>
+
+No pill background; the active trigger takes `--primary` and grows an underline
+from the `after:` pseudo-element. This is what
+[`DashboardHeader`](/docs/components/dashboard-header) uses — reach for that
+instead of hand-rolling it when you want icons and animation too.
+
+## Vertical
+
+<Preview name="tabs/vertical">
+  <TabsVertical />
+</Preview>
+
+`orientation="vertical"` moves the indicator to the right edge of the list and
+stretches triggers to full width. Set it on `Tabs`; the list and triggers read
+it through `group-data-[orientation=vertical]/tabs`.
+
+## API
+
+<TypeTable
+  type={{
+    "Tabs.orientation": {
+      description: "Layout direction. Also passed to Radix for arrow-key handling.",
+      type: '"horizontal" | "vertical"',
+      default: '"horizontal"',
+    },
+    "TabsList.variant": {
+      description: "Pill group or underline.",
+      type: '"default" | "line"',
+      default: '"default"',
+    },
+  }}
+/>
+
+Everything else is `@radix-ui/react-tabs`. `tabsListVariants` is exported if you
+need the classes without the element.
+
+## Files
+
+<ItemFiles name="tabs" />

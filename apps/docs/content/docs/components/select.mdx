@@ -1,0 +1,41 @@
+---
+title: Select
+description: Single choice from a list, on Radix Select.
+---
+
+import SelectBasic from "@/examples/select/basic";
+
+<Install name="select" />
+
+## Example
+
+<Preview name="select/basic">
+  <SelectBasic />
+</Preview>
+
+## Parts
+
+`Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`,
+`SelectGroup`, `SelectLabel`, `SelectSeparator`, `SelectScrollUpButton`,
+`SelectScrollDownButton`.
+
+## Portals and the NUI
+
+`SelectContent` renders through a Radix portal into `document.body`, which puts
+it outside whatever [`Viewport`](/docs/components/viewport) or
+[`AppShell`](/docs/components/app-shell) the trigger lives in. That is what you
+want — a dropdown clipped by its scroll container is worse — but it means the
+menu is not affected by the panel's `clip-path`, and it sits above everything.
+
+If a select is inside a [`Dialog`](/docs/components/dialog), the dialog's own
+portal and focus trap handle it correctly; no extra wiring needed.
+
+## Multiple values
+
+Radix Select is single-value by design. For multi-selection use
+[`MultiSelect`](/docs/components/multi-select), which is built on Popover
+instead.
+
+## Files
+
+<ItemFiles name="select" />

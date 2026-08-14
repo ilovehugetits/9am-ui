@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "stat-card",
+  "title": "Stat Card",
+  "description": "Headline metric: icon chip, label, Phudu value and an optional trend line that picks its arrow and colour from a signed percentage.",
+  "registryDependencies": [
+    "@9am/card",
+    "@9am/icon-trending-down",
+    "@9am/icon-trending-up",
+    "@9am/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/ui/stat-card.tsx",
+      "content": "import * as React from \"react\"\n\nimport { Card, CardContent, CardHeader, CardTitle } from \"@/components/ui/card\"\nimport { TrendingUpIcon } from \"@/components/ui/trending-up\"\nimport { TrendingDownIcon } from \"@/components/ui/trending-down\"\nimport { cn } from \"@/lib/utils\"\n\n/**\n * A headline metric: icon chip, label, big Phudu number, optional trend line.\n *\n * ```tsx\n * <StatCard\n *   icon={<UsersIcon ref={ref} size={20} className=\"text-primary\" />}\n *   label={t(\"ui.overview.playersOnline\")}\n *   value={42}\n *   trend={{ percent: 12.5, label: t(\"ui.overview.fromLastWeek\", { percent: \"12.5%\" }) }}\n *   onMouseEnter={() => ref.current?.startAnimation()}\n * />\n * ```\n *\n * `trend.label` is the whole sentence, already translated and interpolated.\n * The card decides the arrow and the colour from `percent`, but never builds\n * the string — pluralisation and word order are the locale's business.\n */\nfunction StatCard({\n  icon,\n  label,\n  value,\n  trend,\n  className,\n  ...props\n}: {\n  icon?: React.ReactNode\n  label: React.ReactNode\n  value: React.ReactNode\n  trend?: {\n    /** Signed. Sign picks the arrow and the colour; magnitude is unused. */\n    percent: number\n    label: React.ReactNode\n  }\n} & React.ComponentProps<\"div\">) {\n  const Arrow = trend && trend.percent < 0 ? TrendingDownIcon : TrendingUpIcon\n  const trendClass =\n    !trend || trend.percent === 0\n      ? \"text-muted-foreground\"\n      : trend.percent > 0\n        ? \"text-primary\"\n        : \"text-red-400\"\n\n  return (\n    <Card\n      data-slot=\"stat-card\"\n      className={cn(\"flex flex-col justify-between\", className)}\n      {...props}\n    >\n      <CardHeader className=\"flex flex-row items-center justify-between\">\n        {icon ? (\n          <div className=\"flex items-center gap-2 bg-border rounded-md p-2.5\">{icon}</div>\n        ) : null}\n        <CardTitle className=\"text-2xl font-bold leading-[1] !font-[phudu]\">{label}</CardTitle>\n      </CardHeader>\n      <CardContent>\n        <div className=\"text-2xl font-bold !font-[phudu]\">{value}</div>\n        {trend ? (\n          <p className={cn(\"text-xs flex items-center gap-1\", trendClass)}>\n            <Arrow size={12} />\n            {trend.label}\n          </p>\n        ) : null}\n      </CardContent>\n    </Card>\n  )\n}\n\nexport { StatCard }\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

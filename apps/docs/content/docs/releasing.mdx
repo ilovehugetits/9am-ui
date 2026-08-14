@@ -1,0 +1,67 @@
+---
+title: Releasing a change
+description: How a fix in the kit reaches the scripts that use it.
+icon: Send
+---
+
+## The loop
+
+```bash
+bun run build       # regenerates fonts, registry.json and r/
+bun run typecheck
+bun run preview     # eyeball it in both themes
+bun run docs        # and on the docs site, if you touched a documented API
+
+git commit -am "feat(button): …" && git push
+```
+
+## Why `r/` is committed
+
+`raw.githubusercontent.com` serves committed files. That is the entire hosting
+story — it is what lets a plain GitHub repo act as a shadcn registry with no
+server, no CDN and no deploy step.
+
+So `r/*.json` is a build artifact that must be in the commit. `bun run build`
+regenerates it; pushing without running the build ships a registry that does not
+match the source.
+
+## Nothing auto-updates
+
+Consumers pick a change up on their next:
+
+```bash
+bunx shadcn@latest add @9am/button --overwrite
+```
+
+That is deliberate. A script in escrow on someone's server should not change
+because someone pushed to `main` — and `--overwrite` is destructive to any local
+fix, so it has to be a decision.
+
+## Adding a component
+
+1. Write it in `registry/ui/`, importing through the same aliases a consumer
+   uses.
+2. Add an entry to the generator so it lands in `registry.json`.
+3. Add it to `apps/preview/src/Gallery.tsx`.
+4. Add a page under `apps/docs/content/docs/components/` and at least one
+   example under `apps/docs/examples/<name>/`.
+5. `bun run build && bun run typecheck`.
+
+See [CONTRIBUTING.md](https://github.com/ilovehugetits/9am-ui/blob/main/CONTRIBUTING.md).
+
+<Callout>
+  Step 4 is not optional busywork — the docs import out of `registry/` directly,
+  so an example that does not compile fails the docs build. It is the cheapest
+  test the kit has that a component is actually usable through its public API.
+</Callout>
+
+## Documenting the change
+
+Both surfaces read from the source, so most of it is automatic:
+
+- **Install commands, dependency lists and file tables** come from
+  `registry.json` at build time.
+- **Previews and their Code tabs** are the same example file.
+
+What is left is prose — and the reason behind the change, which is the part
+nothing can generate.

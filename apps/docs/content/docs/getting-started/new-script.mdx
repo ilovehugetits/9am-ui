@@ -1,0 +1,98 @@
+---
+title: New script
+description: Scaffold a whole script — web skeleton, every dependency, and the Lua side — from an empty folder.
+---
+
+Assumes you have already [set up the token](/docs/getting-started/installation).
+
+<Steps>
+
+<Step>
+
+### Create the web folder
+
+```bash
+mkdir -p my-script/web && cd my-script/web
+bun init -y
+```
+
+Add the [`components.json`](/docs/getting-started/installation#3-point-componentsjson-at-the-registry)
+with the `registries` block.
+
+</Step>
+
+<Step>
+
+### Pull the scaffold
+
+```bash
+bunx shadcn@latest add @9am/scaffold
+```
+
+That writes the vite / tsconfig / eslint / postcss configs, `index.html`,
+`main.tsx` and a starter `App`, and drags in every registry item they reference.
+See [what is in it](/docs/scaffolds/scaffold).
+
+</Step>
+
+<Step>
+
+### Pull the Lua side
+
+From the **resource root**, not `web/`:
+
+```bash
+cd .. && bunx 9am-ui lua
+```
+
+</Step>
+
+<Step>
+
+### Configure the one file you are meant to edit
+
+```ts title="web/src/nui.config.ts"
+export const nuiConfig = {
+  resourceName: "my-script",
+  themeStorageKey: "my-script:theme",
+  defaultTheme: "dark",
+};
+```
+
+<Callout type="warn">
+  Keep the `localStorage` key in `index.html` in sync with `themeStorageKey`. It
+  runs before first paint specifically to avoid a theme flash, and it cannot read
+  the config module to find out which key to look at.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Build and verify
+
+```bash
+cd web && bun install && bun run build
+bunx 9am-ui doctor
+```
+
+`doctor` confirms the token works, the theme is imported, and — the one that
+actually bites — that no `oklch()` survived into the built CSS. See
+[FiveM CEF](/docs/cef).
+
+</Step>
+
+</Steps>
+
+## What you get
+
+A running NUI with the 9AM theme, the visibility provider wired to `ESC`, the
+theme store, `fetchNui` / `useNuiEvent`, and smooth scrolling installed. From
+there, add components:
+
+```bash
+bunx shadcn@latest add @9am/viewport @9am/data-table @9am/stat-card
+```
+
+If you want a dashboard rather than a blank page, `@9am/dashboard-scaffold`
+gives you the assembled shell — header, tabs, transitions and an overview page.

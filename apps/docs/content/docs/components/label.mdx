@@ -1,0 +1,43 @@
+---
+title: Label
+description: A form label that dims with its disabled control.
+---
+
+import LabelBasic from "@/examples/label/basic";
+
+<Install name="label" />
+
+## Example
+
+<Preview name="label/basic">
+  <LabelBasic />
+</Preview>
+
+## It is a flex row
+
+`Label` lays out as `flex items-center gap-2`, so putting a control or an
+[`InfoTip`](/docs/components/info-tip) inside it just works — no wrapper, no
+alignment fixing:
+
+```tsx
+<Label htmlFor="cost">
+  Dealer cost
+  <InfoTip>What the shop pays.</InfoTip>
+</Label>
+```
+
+## Disabled propagation
+
+Two selectors handle the common cases without you passing a `disabled` prop:
+
+- `peer-disabled:opacity-50` — the label dims when a sibling `peer` control is
+  disabled.
+- `group-data-[disabled=true]:opacity-50` — it dims when an ancestor marked
+  `data-disabled="true"` is. [`Field`](/docs/components/field) uses this one.
+
+Built on `@radix-ui/react-label`, so clicking the label focuses its control even
+when the control is a custom element rather than a native input.
+
+## Files
+
+<ItemFiles name="label" />

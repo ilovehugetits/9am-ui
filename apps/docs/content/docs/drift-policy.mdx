@@ -1,0 +1,64 @@
+---
+title: Drift policy
+description: What is allowed to differ from the registry, what warns, and what fails the build.
+icon: GitCompareArrows
+---
+
+Copy-in distribution means every script owns its UI outright. The cost is drift.
+`9am-ui check` is what bounds it.
+
+```bash
+bunx 9am-ui check     # run from web/, wire it into CI
+```
+
+## The rules
+
+| What changed | Result |
+|---|---|
+| `src/styles/9am-theme.css` or `9am-fonts.css` | **Fails (exit 1).** |
+| Any component or icon | **Warns (exit 0).** |
+| `src/nui.config.ts` | Ignored. |
+| Anything from `@9am/scaffold` | Ignored. |
+
+## Why the theme is a hard failure
+
+Identical tokens across every script is what makes them read as siblings. A
+server running four 9AM scripts should see one design language, not four
+dialects of one. That property survives exactly as long as nobody edits the
+stylesheet locally, so the check is the only thing holding it.
+
+Restore it with:
+
+```bash
+bunx shadcn@latest add @9am/theme @9am/fonts --overwrite
+```
+
+Or, if the change was right, make it **here** and [release it](/docs/releasing)
+so every script gets it.
+
+Script-specific styling belongs in your own `index.css`, below the import — that
+is not drift, that is the intended escape hatch.
+
+## Why components only warn
+
+Teams need to be able to fix something under deadline without a build failure
+standing in the way. That is the whole reason for copy-in.
+
+But a local fix helps nobody else, and the next `--overwrite` silently reverts
+it. The warning exists to make that trade visible at the moment you make it.
+Consider upstreaming.
+
+## Why nui.config.ts and the scaffold are ignored
+
+`nui.config.ts` is supposed to differ — it is the one kit file you are meant to
+edit. The scaffold is a starting point, not a managed artifact; once it is
+yours, it is yours.
+
+## In CI
+
+```yaml
+- run: bunx 9am-ui check
+```
+
+Exit 1 on theme drift fails the job. Component warnings show in the log without
+blocking.

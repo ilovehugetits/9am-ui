@@ -1,0 +1,63 @@
+---
+title: Multi Select
+description: Searchable multiple choice with removable chips, built on Popover.
+---
+
+import MultiSelectBasic from "@/examples/multi-select/basic";
+
+<Install name="multi-select" />
+
+## Example
+
+<Preview name="multi-select/basic">
+  <MultiSelectBasic />
+</Preview>
+
+## It is controlled
+
+There is no internal selection state — you own the array:
+
+```tsx
+const [selected, setSelected] = React.useState<string[]>([]);
+
+<MultiSelect
+  options={CLASSES}
+  selected={selected}
+  onSelectionChange={setSelected}
+/>;
+```
+
+## Only one can be open at a time
+
+Radix Popover does not coordinate across instances, so a form with several
+multi-selects would happily open all of them. Each instance broadcasts a
+`multiselect:open` custom event on `document` with its own `useId`, and every
+other instance closes when it sees an id that is not its own.
+
+A custom DOM event rather than shared React state, because the instances have no
+common ancestor to hold that state and threading a provider through every form
+that happens to use two of these is not worth it.
+
+## Strings
+
+Falls back to `KIT_DEFAULTS` in [`@9am/i18n`](/docs/nui/i18n):
+`ui.common.selectPlaceholder`, `ui.common.searchPlaceholder`,
+`ui.common.noResultsFound`, `ui.common.nSelected`. The props override them
+per-instance.
+
+## API
+
+<TypeTable
+  type={{
+    options: { description: "The choices.", type: "{ value: string; label: string }[]" },
+    selected: { description: "Selected values. You own this array.", type: "string[]" },
+    onSelectionChange: { description: "Called with the next array.", type: "(selected: string[]) => void" },
+    placeholder: { description: "Trigger text when nothing is selected.", type: "string" },
+    searchPlaceholder: { description: "Filter box placeholder.", type: "string" },
+    emptyMessage: { description: "Shown when the filter matches nothing.", type: "string" },
+  }}
+/>
+
+## Files
+
+<ItemFiles name="multi-select" />

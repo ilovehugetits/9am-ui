@@ -1,0 +1,47 @@
+---
+title: Table
+description: The unstyled-ish table primitives. For anything with search, sorting or pages, use Data Table instead.
+---
+
+import TableBasic from "@/examples/table/basic";
+
+<Install name="table" />
+
+## Example
+
+<Preview name="table/basic" center={false}>
+  <TableBasic />
+</Preview>
+
+## When to use this instead of Data Table
+
+Reach for `Table` when the rows are known, few, and not worth interacting with —
+a summary, a receipt, a fixed comparison. The moment you want search, sorting or
+pagination, [`DataTable`](/docs/components/data-table) already has all three and
+uses these same primitives underneath.
+
+`Table` also does not depend on `@tanstack/react-table` or
+[`i18n`](/docs/nui/i18n), so it is the lighter choice when you genuinely only
+need rows.
+
+## Scrolling
+
+`Table` does not scroll itself. Put it in a container that does:
+
+```tsx
+<div className="overflow-auto scrollbar-mini scrollbar-mini-absolute rounded-lg border">
+  <Table>…</Table>
+</div>
+```
+
+`scrollbar-mini` and `scrollbar-mini-absolute` come from
+[the theme](/docs/theme#base-rules).
+
+## Parts
+
+`Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableHead`, `TableRow`,
+`TableCell`, `TableCaption`.
+
+## Files
+
+<ItemFiles name="table" />

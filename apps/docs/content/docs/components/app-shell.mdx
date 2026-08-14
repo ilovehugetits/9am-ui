@@ -1,0 +1,63 @@
+---
+title: App Shell
+description: A fixed 1280×720 panel centred in the NUI viewport — the frame every 9AM dashboard is assembled in.
+---
+
+import AppShellBasic from "@/examples/app-shell/basic";
+import { Scaled } from "@/components/scaled";
+
+<Install name="app-shell" />
+
+## Example
+
+Scaled to fit this column; the real thing is 1280×720.
+
+<Preview name="app-shell/basic" center={false} className="p-4">
+  <Scaled width={1280} height={720}>
+    <AppShellBasic />
+  </Scaled>
+</Preview>
+
+## Why fixed and not fluid
+
+The NUI is composited over the game at whatever resolution the player runs. A
+fluid layout means a dashboard that is cramped at 1080p and stretched to nothing
+at ultrawide — and, worse, one that nobody can design against, because there is
+no canonical size to draw at.
+
+A fixed 1280×720 panel is identical for everyone and matches the proportions the
+design language was drawn at. The outer div stays transparent, so the game shows
+through around the panel.
+
+## The pb-0
+
+```tsx
+className="… rounded-3xl gap-4 p-3 pb-0"
+```
+
+The page area below the header runs to the panel edge on purpose, so a scrolling
+subpage fades out against it instead of stopping short above a strip of padding.
+[`Viewport`](/docs/components/viewport) carries its own `mb-3` to compensate.
+
+## Composition
+
+`AppShell` expects two children in practice: a
+[`DashboardHeader`](/docs/components/dashboard-header) and a
+[`PageTransition`](/docs/components/page-transition) wrapping the current page.
+
+```tsx
+<AppShell>
+  <DashboardHeader tabs={TABS} value={tab} onValueChange={setTab} … />
+  <PageTransition pageKey={tab}>
+    {tab === "overview" && <Overview />}
+    {tab === "stock" && <Stock />}
+  </PageTransition>
+</AppShell>
+```
+
+[`@9am/dashboard-scaffold`](/docs/scaffolds/dashboard-scaffold) is that
+arrangement, ready to edit.
+
+## Files
+
+<ItemFiles name="app-shell" />

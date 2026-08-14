@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "section-header",
+  "title": "Section Header",
+  "description": "The title row a subpage opens with: icon chip, Phudu title, optional action. Goes inside a ViewportTitle.",
+  "registryDependencies": [
+    "@9am/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/ui/section-header.tsx",
+      "content": "import * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\n/**\n * The title row every 9AM subpage opens with: an icon in a chip, the page\n * name in Phudu, and an optional action pinned to the right.\n *\n * Drop it inside a ViewportTitle so it inherits the header's blur-swap on\n * scroll:\n *\n * ```tsx\n * <ViewportHeader>\n *   <ViewportTitle>\n *     <SectionHeader\n *       icon={<UsersIcon ref={iconRef} size={20} className=\"text-primary\" />}\n *       title={t(\"ui.players.title\")}\n *       onMouseEnter={() => iconRef.current?.startAnimation()}\n *       action={<Button>…</Button>}\n *     />\n *   </ViewportTitle>\n * </ViewportHeader>\n * ```\n *\n * The icon is a node rather than a component prop so the caller keeps the ref\n * — the kit's icons animate through an imperative handle, and hover usually\n * belongs to this whole row rather than the icon's own hit box.\n */\nfunction SectionHeader({\n  icon,\n  title,\n  action,\n  className,\n  ...props\n}: {\n  icon?: React.ReactNode\n  title: React.ReactNode\n  action?: React.ReactNode\n} & Omit<React.ComponentProps<\"div\">, \"title\">) {\n  return (\n    <div\n      data-slot=\"section-header\"\n      className={cn(\"flex flex-row items-center justify-between w-full gap-4\", className)}\n      {...props}\n    >\n      <div className=\"flex items-center gap-2 text-2xl !font-[phudu] font-semibold leading-[1]\">\n        {icon ? (\n          <div className=\"flex items-center gap-2 bg-input border rounded-lg p-2.5\">{icon}</div>\n        ) : null}\n        {title}\n      </div>\n      {action}\n    </div>\n  )\n}\n\nexport { SectionHeader }\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

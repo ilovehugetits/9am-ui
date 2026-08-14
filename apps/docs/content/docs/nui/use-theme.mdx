@@ -1,0 +1,71 @@
+---
+title: useTheme
+description: The theme store — owns the .dark class on <html> and persists to localStorage.
+---
+
+import ThemeToggle from "@/examples/theme/toggle";
+
+<Install name="use-theme" />
+
+## Usage
+
+```tsx
+import { useTheme } from "@/hooks/useTheme";
+
+const { theme, setTheme, toggleTheme } = useTheme();
+```
+
+A zustand store, so it works outside components too —
+`useTheme.getState().setTheme("light")`.
+
+## What it owns
+
+Toggling writes two things: the `.dark` class on `document.documentElement`, and
+the value in `localStorage` under `nuiConfig.themeStorageKey`.
+
+The class is what actually drives the UI. [The theme](/docs/theme) declares
+`@custom-variant dark (&:where(.dark, .dark *))`, so every token and every
+`dark:` utility keys off it.
+
+## The pre-paint script
+
+The store's initial value is read from `localStorage` — but by the time React
+runs, the page has already painted once. So `index.html` sets the class before
+anything else:
+
+```html
+<script>
+  try {
+    var t = localStorage.getItem("my-script:theme") || "dark";
+    if (t === "dark") document.documentElement.classList.add("dark");
+  } catch (e) {}
+</script>
+```
+
+The store then mirrors what that script decided rather than fighting it.
+
+<Callout type="warn">
+  That inline script cannot import `nui.config.ts`, so the storage key is
+  duplicated there as a literal. Change `themeStorageKey` and you must change
+  `index.html` too, or the player gets a flash of the wrong theme on every open.
+</Callout>
+
+## With the toggle icon
+
+<Preview name="theme/toggle">
+  <ThemeToggle />
+</Preview>
+
+In a script, replace the local state with the store:
+
+```tsx
+const { theme, toggleTheme } = useTheme();
+
+<Button variant="default2" size="icon" onClick={toggleTheme}>
+  <ThemeToggleIcon ref={icon} theme={theme} size={16} />
+</Button>;
+```
+
+## Files
+
+<ItemFiles name="use-theme" />

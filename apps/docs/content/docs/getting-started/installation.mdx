@@ -1,0 +1,65 @@
+---
+title: Installation
+description: Point components.json at the registry. There is nothing to authenticate and nothing to install.
+---
+
+The registry is served straight off `raw.githubusercontent.com` — committed
+files, no hosting, no API. It is public, so there is no token to create and no
+account to make: point `components.json` at the URL and `shadcn` can read it.
+
+## 1. Point `components.json` at the registry
+
+```json title="components.json"
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/index.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "hooks": "@/hooks"
+  },
+  "registries": {
+    "@9am": {
+      "url": "https://raw.githubusercontent.com/ilovehugetits/9am-ui/main/r/{name}.json"
+    }
+  }
+}
+```
+
+<Callout>
+  Upgrading from the private-registry era? Delete the `headers` block. An
+  `Authorization` header built from an unset variable sends an empty
+  `Bearer `, and GitHub rejects a malformed credential instead of falling back
+  to an anonymous read — so a leftover header fails where no header succeeds.
+</Callout>
+
+The `aliases` block is not decorative — the components import each other through
+`@/components/ui/*`, `@/lib/utils`, `@/hooks/*` and `@/i18n`. Change an alias and
+you have to change it in every file the registry copies in.
+
+## 2. Add something
+
+```bash
+bunx shadcn@latest add @9am/theme @9am/button
+```
+
+Transitive dependencies resolve automatically. `@9am/data-table` alone pulls
+`button`, `input`, `table`, `i18n` and three icons.
+
+## Next
+
+<Cards>
+  <Card title="New script" href="/docs/getting-started/new-script" description="Scaffold web and Lua from nothing." />
+  <Card title="Existing script" href="/docs/getting-started/existing-script" description="Take only what you want." />
+</Cards>

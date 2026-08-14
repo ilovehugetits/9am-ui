@@ -1,0 +1,51 @@
+---
+title: Dashboard scaffold
+description: The assembled dashboard — shell, header, tabs, transitions and an overview page — ready to edit.
+---
+
+import AppShellBasic from "@/examples/app-shell/basic";
+import { Scaled } from "@/components/scaled";
+
+<Install name="dashboard-scaffold" />
+
+## What you get
+
+Roughly this, as editable source rather than a component:
+
+<Preview name="app-shell/basic" center={false} className="p-4">
+  <Scaled width={1280} height={720}>
+    <AppShellBasic />
+  </Scaled>
+</Preview>
+
+An `App.tsx` that composes [`AppShell`](/docs/components/app-shell),
+[`DashboardHeader`](/docs/components/dashboard-header) and
+[`PageTransition`](/docs/components/page-transition) with the tab state already
+wired, and an `Overview.tsx` page of
+[`StatCard`](/docs/components/stat-card)s inside a
+[`Viewport`](/docs/components/viewport).
+
+## It replaces the starter App
+
+This overwrites the `App.tsx` from [`@9am/scaffold`](/docs/scaffolds/scaffold).
+Add it immediately after scaffolding, or diff before you overwrite something you
+have already changed.
+
+## Where to go from there
+
+Everything is yours to edit. The parts most people change first:
+
+- **The tab array** — add pages, remove the ones you do not need, and filter it
+  by permission rather than disabling triggers.
+- **`Overview.tsx`** — the stat cards are placeholders reading nothing. Wire them
+  to [`fetchNui`](/docs/nui/nui).
+- **The avatar** — a mugshot `<img>` in the header chip.
+
+## Not managed
+
+Like the base scaffold, `9am-ui check` ignores it. It is a starting arrangement,
+not a tracked artifact.
+
+## Files
+
+<ItemFiles name="dashboard-scaffold" />

@@ -1,0 +1,105 @@
+---
+title: Icons
+description: Hand-built animated SVGs with an imperative handle, so a tab or a table row can drive them. No icon library.
+---
+
+import IconRef from "@/examples/icons/ref";
+
+<ItemCount filter="icons" /> icons, each its own registry item. Hover a tile to
+play its animation; click to copy the item name.
+
+<IconGallery />
+
+`icon-theme-toggle` is the forty-seventh and is not in the grid above — it takes
+a required `theme` prop and renders a sun or a moon accordingly, so there is no
+neutral state to show in a gallery. It has [its own
+example](/docs/theme#theme-toggle).
+
+## Installing
+
+Each icon is added individually:
+
+```bash
+bunx shadcn@latest add @9am/icon-users @9am/icon-wallet
+```
+
+They land in `components/ui/<name>.tsx` alongside the primitives — the split
+between `registry/ui` and `registry/icons` only exists in this repo, for
+legibility. The export is the camel-cased name plus `Icon`:
+
+```tsx
+import { UsersIcon } from "@/components/ui/users";
+import { HardDriveDownloadIcon } from "@/components/ui/hard-drive-download";
+```
+
+## Two ways to drive one
+
+<Preview name="icons/ref">
+  <IconRef />
+</Preview>
+
+**Uncontrolled.** With no ref attached, the icon animates on its own hover. Fine
+for a standalone glyph.
+
+**Controlled.** Attaching a ref flips `isControlledRef` inside the icon, which
+stops it self-triggering and forwards `onMouseEnter` / `onMouseLeave` to you
+instead. The parent then decides when to play it:
+
+```tsx
+const icon = React.useRef<UsersIconHandle>(null);
+
+<div
+  onMouseEnter={() => icon.current?.startAnimation()}
+  onMouseLeave={() => icon.current?.stopAnimation()}
+>
+  <UsersIcon ref={icon} size={20} />
+  Employees
+</div>;
+```
+
+That is the mode tabs, table rows, stat cards and buttons use — the hover target
+is the row, not the 20 pixels the glyph occupies.
+
+## The handle
+
+```ts
+interface UsersIconHandle {
+  startAnimation: () => void;
+  stopAnimation: () => void;
+}
+```
+
+Every icon exports one, named `<Component>Handle`.
+
+<Callout type="warn" title="One exception">
+  `icon-refresh-cw` exports its handle interface as `RefreshCCWIconWIcon` — a
+  typo in the source. The runtime component is fine; only the type name is
+  wrong. Declare the shape locally until it is fixed.
+</Callout>
+
+## Props
+
+<TypeTable
+  type={{
+    size: { description: "Width and height in px. Set on both the wrapper and the svg.", type: "number", default: "28" },
+    className: { description: "Merged onto the wrapper div, not the svg.", type: "string" },
+  }}
+/>
+
+Strokes are painted with `currentColor`, so colour comes from the parent's text
+colour. Note that the class lands on the **wrapper**, so `text-primary` works
+but a `[&_svg]` selector aimed at the icon will not reach through `motion`'s
+elements — which is why
+[`DashboardHeader`](/docs/components/dashboard-header) sets an inline `color`
+instead.
+
+## Why not an icon library
+
+Every icon here is a `motion` animation with hand-tuned springs, not a static
+path. Pulling in `lucide-react` for the shapes and then re-authoring each one to
+animate would ship the whole library to a game client to use forty of its
+glyphs. These are ~90 lines each and cost nothing that is not used.
+
+## The full list
+
+<RegistryTable filter="icons" />

@@ -1,0 +1,63 @@
+---
+title: CLI
+description: check, doctor, lua and fonts.
+icon: Terminal
+---
+
+Shipped through the registry as `@9am/tools` and runnable straight from the repo:
+
+```bash
+bunx 9am-ui <command>
+```
+
+## `check`
+
+```bash
+bunx 9am-ui check     # from web/
+```
+
+Compares every managed file against the registry. Theme and font drift exits 1;
+component drift warns. See [drift policy](/docs/drift-policy) for the rules and
+the reasoning.
+
+Wire this into CI.
+
+## `doctor`
+
+```bash
+bunx 9am-ui doctor    # from web/, after a build
+```
+
+The pre-flight check for "it works in my browser but not in game". It verifies:
+
+- the registry token is present and works,
+- the theme is imported from your entry stylesheet,
+- `installSmoothScroll()` is called in `main.tsx`,
+- and no `oklch()` survived into the built CSS.
+
+That last one needs a build to have happened — run `bun run build` first, or it
+has nothing to scan. Both of the
+[CEF non-negotiables](/docs/cef#the-two-non-negotiables) are covered here.
+
+## `lua`
+
+```bash
+bunx 9am-ui lua       # from the resource root, NOT web/
+```
+
+Writes the Lua side of a new script: `fxmanifest.lua`, the client bootstrap,
+`SetNuiVisible`, the `hideFrame` and `getLocale` callbacks, and the
+`SendReactMessage` helper the [NUI layer](/docs/nui/nui) expects.
+
+The working directory matters — it targets the project root because that is
+where `fxmanifest.lua` belongs.
+
+## `fonts`
+
+```bash
+bunx 9am-ui fonts     # from web/
+```
+
+Emits the woff2 files and `9am-fonts-linked.css`, the alternative to the base64
+`@9am/fonts` item. Use it when your script has several HTML entries — see
+[Fonts](/docs/getting-started/fonts) for when that applies.

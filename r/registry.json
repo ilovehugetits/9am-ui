@@ -149,6 +149,25 @@
       ]
     },
     {
+      "name": "navigation",
+      "type": "registry:file",
+      "title": "Navigation Provider",
+      "description": "Top-level page store driven by the `setPage` message, for scripts where Lua decides which screen opens. A single screen with tabs does not need it.",
+      "dependencies": [
+        "zustand@^5.0.14"
+      ],
+      "registryDependencies": [
+        "@9am/nui"
+      ],
+      "files": [
+        {
+          "path": "registry/nui/NavigationProvider.tsx",
+          "type": "registry:file",
+          "target": "src/providers/NavigationProvider.tsx"
+        }
+      ]
+    },
+    {
       "name": "i18n",
       "type": "registry:file",
       "title": "Runtime i18n",
@@ -164,6 +183,21 @@
           "path": "registry/i18n/index.ts",
           "type": "registry:file",
           "target": "src/i18n/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "app-shell",
+      "type": "registry:ui",
+      "title": "App Shell",
+      "description": "The fixed 1280x720 centred panel every 9AM dashboard sits in. Fixed rather than fluid so the layout is identical at 1080p and ultrawide.",
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/app-shell.tsx",
+          "type": "registry:ui"
         }
       ]
     },
@@ -242,6 +276,23 @@
       ]
     },
     {
+      "name": "dashboard-header",
+      "type": "registry:ui",
+      "title": "Dashboard Header",
+      "description": "Identity, centred animated tabs and an action cluster. Tabs are passed as data — the per-tab animation handle and three-state icon colour live inside, so adding a tab is one array entry.",
+      "registryDependencies": [
+        "@9am/tabs",
+        "@9am/use-theme",
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/dashboard-header.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "data-table",
       "type": "registry:ui",
       "title": "Data Table",
@@ -281,6 +332,21 @@
       "files": [
         {
           "path": "registry/ui/dialog.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "empty-state",
+      "type": "registry:ui",
+      "title": "Empty State",
+      "description": "What a list renders instead of nothing, sized and muted to match across scripts.",
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/empty-state.tsx",
           "type": "registry:ui"
         }
       ]
@@ -380,6 +446,24 @@
       ]
     },
     {
+      "name": "page-transition",
+      "type": "registry:ui",
+      "title": "Page Transition",
+      "description": "Cross-fade between dashboard pages: AnimatePresence in wait mode with the 9AM opacity/scale variants, tuned small enough to stay smooth in CEF.",
+      "dependencies": [
+        "motion@^12.42.2"
+      ],
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/page-transition.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "popover",
       "type": "registry:ui",
       "title": "Popover",
@@ -393,6 +477,21 @@
       "files": [
         {
           "path": "registry/ui/popover.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "section-header",
+      "type": "registry:ui",
+      "title": "Section Header",
+      "description": "The title row a subpage opens with: icon chip, Phudu title, optional action. Goes inside a ViewportTitle.",
+      "registryDependencies": [
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/section-header.tsx",
           "type": "registry:ui"
         }
       ]
@@ -429,6 +528,24 @@
       "files": [
         {
           "path": "registry/ui/separator.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "stat-card",
+      "type": "registry:ui",
+      "title": "Stat Card",
+      "description": "Headline metric: icon chip, label, Phudu value and an optional trend line that picks its arrow and colour from a signed percentage.",
+      "registryDependencies": [
+        "@9am/card",
+        "@9am/icon-trending-down",
+        "@9am/icon-trending-up",
+        "@9am/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/stat-card.tsx",
           "type": "registry:ui"
         }
       ]
@@ -1434,6 +1551,43 @@
           "path": "registry/scaffold/web/tsconfig.node.json",
           "type": "registry:file",
           "target": "tsconfig.node.json"
+        }
+      ]
+    },
+    {
+      "name": "dashboard-scaffold",
+      "type": "registry:file",
+      "title": "Dashboard Scaffold",
+      "description": "Everything in @9am/scaffold plus a working dashboard: the shell, a header with animated tabs, page transitions and an example subpage built from section-header, stat-card and empty-state. Start here for anything with more than one screen.",
+      "registryDependencies": [
+        "@9am/app-shell",
+        "@9am/button",
+        "@9am/dashboard-header",
+        "@9am/empty-state",
+        "@9am/i18n",
+        "@9am/icon-layout-grid",
+        "@9am/icon-settings",
+        "@9am/icon-theme-toggle",
+        "@9am/icon-users",
+        "@9am/icon-x",
+        "@9am/nui",
+        "@9am/page-transition",
+        "@9am/scaffold",
+        "@9am/section-header",
+        "@9am/stat-card",
+        "@9am/use-theme",
+        "@9am/viewport"
+      ],
+      "files": [
+        {
+          "path": "registry/dashboard-scaffold/App.tsx",
+          "type": "registry:file",
+          "target": "src/components/App.tsx"
+        },
+        {
+          "path": "registry/dashboard-scaffold/Overview.tsx",
+          "type": "registry:file",
+          "target": "src/components/pages/Overview.tsx"
         }
       ]
     }

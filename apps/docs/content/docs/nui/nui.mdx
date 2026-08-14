@@ -1,0 +1,80 @@
+---
+title: fetchNui & useNuiEvent
+description: The two functions the whole NUI layer is built on — calling Lua, and being called by it.
+---
+
+<Install name="nui" />
+
+Adds `utils/fetchNui.ts`, `hooks/useNuiEvent.ts`, `utils/misc.ts`,
+`utils/debugData.ts` and `nui.config.ts`.
+
+## Calling Lua
+
+```tsx
+import { fetchNui } from "@/utils/fetchNui";
+
+const vehicles = await fetchNui<Vehicle[]>("getStock");
+await fetchNui("buyVehicle", { model: "sultan", plate });
+```
+
+`fetchNui` POSTs to `https://<resourceName>/<callback>`. The resource name comes
+from `window.GetParentResourceName()` in CEF, and falls back to
+`nuiConfig.resourceName` when the app runs as a plain browser page — where it
+just needs to be something recognisable in the network tab.
+
+## Being called by Lua
+
+```tsx
+import { useNuiEvent } from "@/hooks/useNuiEvent";
+
+useNuiEvent<Vehicle[]>("setStock", setStock);
+useNuiEvent<boolean>("setVisible", setVisible);
+```
+
+Lua sends these with `SendNUIMessage({ action = "setStock", data = { … } })`.
+The hook keeps the handler in a ref, so you can pass an inline closure without
+re-subscribing on every render.
+
+## Browser dev mode
+
+`isEnvBrowser()` is `!window.invokeNative` — true in your browser, false in CEF.
+Everything that must not run outside the game is gated on it.
+
+`debugData()` uses it to fake inbound messages so you can develop without
+launching FiveM:
+
+```tsx
+debugData<Vehicle[]>([{ action: "setStock", data: MOCK_STOCK }]);
+```
+
+<Callout type="warn">
+  `debugData` reads `import.meta.env.MODE`, so it only works under Vite. It is a
+  no-op in production builds and would need adapting for any other bundler.
+</Callout>
+
+## nui.config.ts
+
+The one kit file you are meant to edit. `bunx 9am-ui check` skips it
+deliberately.
+
+```ts title="src/nui.config.ts"
+export const nuiConfig = {
+  resourceName: "my-script",
+  themeStorageKey: "my-script:theme",
+  defaultTheme: "dark",
+} as const;
+```
+
+`themeStorageKey` is namespaced per script so two 9AM NUIs open in the same CEF
+context cannot stomp each other's theme.
+
+## Related
+
+<Cards>
+  <Card title="Visibility" href="/docs/nui/visibility" description="Show and hide the frame, with ESC and focus release." />
+  <Card title="i18n" href="/docs/nui/i18n" description="Pull the dictionary from Lua at boot." />
+</Cards>
+
+## Files
+
+<ItemFiles name="nui" />

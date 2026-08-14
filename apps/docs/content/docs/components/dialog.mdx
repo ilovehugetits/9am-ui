@@ -1,0 +1,52 @@
+---
+title: Dialog
+description: A modal with an overlay, a focus trap, and a close button you can turn off.
+---
+
+import DialogBasic from "@/examples/dialog/basic";
+
+<Install name="dialog" />
+
+## Example
+
+<Preview name="dialog/basic">
+  <DialogBasic />
+</Preview>
+
+## `noClose`
+
+`DialogContent` renders an X in the top-right by default. Pass `noClose` to drop
+it — for a dialog that must be resolved by choosing one of its actions rather
+than dismissed:
+
+```tsx
+<DialogContent noClose>…</DialogContent>
+```
+
+Note that this only removes the button. Escape and overlay-click still close the
+dialog; use Radix's `onInteractOutside` and `onEscapeKeyDown` if you need those
+gone too.
+
+## Escape is contended
+
+[`VisibilityProvider`](/docs/nui/visibility) listens for Escape on `window` and
+closes the whole NUI frame. Radix stops propagation on Escape while a dialog is
+open, so the dialog closes and the frame stays — which is the behaviour you
+want, and it works because Radix's handler runs first.
+
+If you write your own Escape handling, check `event.defaultPrevented` before
+acting, or you will close the frame out from under an open dialog.
+
+## Parts
+
+`Dialog`, `DialogTrigger`, `DialogPortal`, `DialogOverlay`, `DialogContent`,
+`DialogHeader`, `DialogFooter`, `DialogTitle`, `DialogDescription`,
+`DialogClose`.
+
+`DialogTitle` is not optional as far as Radix is concerned — omitting it logs an
+accessibility warning. If the dialog is genuinely titleless, render one and hide
+it with `sr-only`.
+
+## Files
+
+<ItemFiles name="dialog" />
