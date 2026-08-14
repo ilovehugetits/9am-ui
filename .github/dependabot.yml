@@ -9,15 +9,20 @@ updates:
     commit-message:
       prefix: "chore(ci)"
 
-  # npm bumps are different. build-registry.ts copies each dependency's version
-  # range out of package.json and into registry.json, so a bump here changes
-  # generated output — and the `r/ is stale` gate will fail the PR until
-  # someone runs `bun run build` and pushes the result onto the branch.
+  # `bun`, not `npm`: they are separate ecosystems to Dependabot, and the npm
+  # one leaves bun.lock untouched. That produces a PR whose package.json and
+  # lockfile disagree, which `bun install --frozen-lockfile` rejects before any
+  # check gets to run — every such PR is dead on arrival.
   #
-  # That is the gate working, not a misconfiguration: the alternative is
-  # shipping a registry that advertises versions nobody verified. Grouped and
+  # Even with the right ecosystem these need a human: build-registry.ts copies
+  # each dependency's version range out of package.json into registry.json, so
+  # a bump changes generated output and the `r/ is stale` gate fails the PR
+  # until someone runs `bun run build` and pushes the result onto the branch.
+  #
+  # That is the gate working, not a misconfiguration — the alternative is
+  # shipping a registry advertising versions nobody verified. Grouped and
   # monthly so it is one rebuild a month rather than one per package.
-  - package-ecosystem: npm
+  - package-ecosystem: bun
     directory: /
     schedule:
       interval: monthly
