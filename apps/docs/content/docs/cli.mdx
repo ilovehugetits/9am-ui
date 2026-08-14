@@ -4,11 +4,17 @@ description: check, doctor, lua and fonts.
 icon: Terminal
 ---
 
-Shipped through the registry as `@9am/tools` and runnable straight from the repo:
+Shipped through the registry as `@9am/tools`, and published to npm so it runs
+without installing anything:
 
 ```bash
 bunx 9am-ui <command>
+npx  9am-ui <command>   # works too
 ```
+
+Every example below uses `bunx` because the rest of the kit assumes bun, but
+the published binary is plain ESM with a `node` shebang — nothing here needs
+bun to run.
 
 ## `check`
 

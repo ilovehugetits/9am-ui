@@ -66,6 +66,10 @@ bunx shadcn@latest add @9am/scaffold     # web skeleton + every dependency
 cd .. && bunx 9am-ui lua                 # Lua side, from the resource root
 ```
 
+> The CLI is on npm as [`9am-ui`](https://www.npmjs.com/package/9am-ui). Examples
+> use `bunx` because the rest of the kit assumes bun, but `npx 9am-ui` works
+> identically — the published binary is plain ESM with a `node` shebang.
+
 Finally, edit **`web/src/nui.config.ts`** — it is the one kit file you are meant to change:
 
 ```ts

@@ -1,10 +1,13 @@
-#!/usr/bin/env bun
 /**
  * 9am-ui — companion CLI for the 9AM UI registry.
  *
  *   bunx 9am-ui check     drift check against the registry (run in web/)
  *   bunx 9am-ui doctor    verify a consumer is wired up correctly
  *   bunx 9am-ui lua       write the Lua half of the scaffold (run in the resource root)
+ *
+ * This file is the source. What ships to npm is `dist/9am-ui.mjs`, bundled by
+ * `bun run cli:build` so `npx 9am-ui` works too — node cannot execute the
+ * TypeScript directly. Keep it free of Bun-only globals: it has to run on both.
  *
  * `check` compares what is actually on disk against the registry version this
  * CLI ships with — so it answers "does my copy match the kit I depend on?",
@@ -17,9 +20,13 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { FACES } from "../scripts/faces";
 
-const PKG_ROOT = path.join(import.meta.dir, "..");
+// `import.meta.dir` is Bun-only. This form works on both runtimes, and resolves
+// to the package root from either location the file runs from: cli/index.ts
+// under bun, or dist/9am-ui.mjs once bundled — both are one level down.
+const PKG_ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const R_DIR = path.join(PKG_ROOT, "r");
 const LUA_DIR = path.join(PKG_ROOT, "registry", "scaffold", "lua");
 const FONT_DIR = path.join(PKG_ROOT, "registry", "theme", "fonts");

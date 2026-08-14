@@ -1,7 +1,7 @@
 {
   "name": "9am-ui",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "workspaces": ["apps/docs"],
   "description": "The shared design language, NUI plumbing and FiveM CEF workarounds behind every 9AM Studios script — an open shadcn registry.",
   "license": "MIT",
@@ -24,10 +24,11 @@
     "ui"
   ],
   "bin": {
-    "9am-ui": "cli/index.ts"
+    "9am-ui": "dist/9am-ui.mjs"
   },
   "files": [
     "cli",
+    "dist",
     "r",
     "registry",
     "scripts"
@@ -36,7 +37,9 @@
     "fonts": "bun scripts/build-fonts.ts",
     "registry:gen": "bun scripts/build-registry.ts",
     "registry:build": "bunx --bun shadcn@latest build --output r",
-    "build": "bun run fonts && bun run registry:gen && bun run registry:build",
+    "cli:build": "bun build cli/index.ts --target=node --format=esm --outfile=dist/9am-ui.mjs --banner \"#!/usr/bin/env node\"",
+    "build": "bun run fonts && bun run registry:gen && bun run registry:build && bun run cli:build",
+    "prepublishOnly": "bun run cli:build",
     "check": "bun cli/index.ts check",
     "doctor": "bun cli/index.ts doctor",
     "typecheck": "tsc --noEmit",
