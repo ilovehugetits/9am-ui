@@ -1,0 +1,34 @@
+name: Component or feature request
+description: Propose something new for the kit.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The kit is deliberately small: every item here is copied into each
+        script and has to be maintained against Chromium 103 forever. The bar
+        is "more than one script needs this", not "this would be nice".
+
+  - type: textarea
+    id: need
+    attributes:
+      label: What do you need, and what are you doing instead today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: scripts
+    attributes:
+      label: Which scripts would use it?
+      description: A component earns its place by being needed in more than one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: cef
+    attributes:
+      label: Known CEF constraints
+      description: |
+        Chromium 103 — no `:has()`, no `@container`, no runtime `oklch()`, no
+        `mask` on `backdrop-filter` output, no wheel scrolling of `clip-path`'d
+        containers. Anything here that you already know will be a problem?

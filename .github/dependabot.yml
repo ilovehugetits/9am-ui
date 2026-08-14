@@ -1,0 +1,33 @@
+version: 2
+updates:
+  # Action versions are safe to bump unattended: nothing in the registry output
+  # depends on them, so these PRs go green on their own.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "chore(ci)"
+
+  # npm bumps are different. build-registry.ts copies each dependency's version
+  # range out of package.json and into registry.json, so a bump here changes
+  # generated output — and the `r/ is stale` gate will fail the PR until
+  # someone runs `bun run build` and pushes the result onto the branch.
+  #
+  # That is the gate working, not a misconfiguration: the alternative is
+  # shipping a registry that advertises versions nobody verified. Grouped and
+  # monthly so it is one rebuild a month rather than one per package.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      radix:
+        patterns: ["@radix-ui/*"]
+      types:
+        patterns: ["@types/*"]
+      dev:
+        dependency-type: development

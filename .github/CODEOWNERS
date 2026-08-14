@@ -1,0 +1,4 @@
+# Requests a review from the maintainer on every PR. This does not block
+# merging — branch protection requires passing checks, not approvals — it just
+# makes sure nothing lands unseen.
+* @ilovehugetits

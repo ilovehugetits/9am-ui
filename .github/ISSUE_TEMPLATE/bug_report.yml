@@ -1,0 +1,61 @@
+name: Bug report
+description: Something in the kit behaves incorrectly.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If it works in the browser but not in game, that is almost always a CEF
+        issue — run `bunx 9am-ui doctor` first and paste the output below. It
+        catches the two failures that account for most of them: `oklch()`
+        surviving into the built CSS, and a missing `installSmoothScroll()`.
+
+  - type: input
+    id: item
+    attributes:
+      label: Which item
+      description: The registry item, e.g. `@9am/viewport`, `@9am/data-table`.
+      placeholder: "@9am/viewport"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where does it break?
+      options:
+        - In game (FiveM / CEF)
+        - In the browser only
+        - Both
+        - At build or install time
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen, and what happens instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. bunx shadcn@latest add @9am/viewport
+        2. …
+    validations:
+      required: true
+
+  - type: textarea
+    id: doctor
+    attributes:
+      label: "`bunx 9am-ui doctor` output"
+      render: shell
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Anything else
+      description: Kit version, whether you have local edits to the component, screenshots.

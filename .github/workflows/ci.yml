@@ -1,0 +1,91 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A newer push makes an in-flight run pointless, so cancel it. Main is the
+# exception: its run is what gates the release workflow, so let it finish.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+# Read-only by default. Nothing here needs a token, which is also what makes
+# these jobs safe to run on pull requests from forks.
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Build preview
+        run: bun run preview:build
+
+      # The committed r/ is what consumers actually install. If it does not
+      # match what the sources generate, someone edited a component and forgot
+      # `bun run build` — and shipping that would hand every script a stale copy.
+      - name: Rebuild registry
+        run: bun run build
+
+      - name: Fail if r/ is stale
+        run: |
+          if ! git diff --quiet -- r registry.json registry/theme/9am-fonts.css; then
+            echo "::error::Committed registry output is out of date. Run 'bun run build' and commit the result."
+            git diff --stat -- r registry.json registry/theme/9am-fonts.css
+            exit 1
+          fi
+          echo "registry output is up to date"
+
+  docs:
+    name: docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+
+      # Vercel builds this too, but its failures land after merge and forks do
+      # not always get a preview deployment. This keeps the docs a merge gate.
+      - name: Build docs
+        run: bun run docs:build
+
+  cli:
+    name: cli
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Bundle the CLI
+        run: bun run cli:build
+
+      - name: Shebang targets node
+        run: head -1 dist/9am-ui.mjs | grep -qx '#!/usr/bin/env node'
+
+      # The published bin runs under node, not bun. Exercising it here is what
+      # stops a Bun-only global (import.meta.dir, Bun.*) from reaching npx
+      # users — the exact bug that shipped in v1.0.0.
+      - name: CLI runs under node
+        run: |
+          node dist/9am-ui.mjs > /dev/null
+
+          # `lua` resolves PKG_ROOT against files inside the package, so it
+          # fails loudly if the bundle cannot locate its own scaffold.
+          out=$(mktemp -d)
+          node dist/9am-ui.mjs lua --dir "$out"
+          test -f "$out/fxmanifest.lua" || {
+            echo "::error::CLI ran but wrote no scaffold — PKG_ROOT is wrong"
+            exit 1
+          }

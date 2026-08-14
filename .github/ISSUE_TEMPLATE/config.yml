@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/ilovehugetits/9am-ui#readme
+    about: Installation, the drift policy, and the CEF non-negotiables.
+  - name: Questions and ideas
+    url: https://github.com/ilovehugetits/9am-ui/discussions
+    about: For anything that is not yet a bug report or a concrete proposal.

@@ -1,0 +1,23 @@
+name: setup
+description: Install bun and the workspace dependencies, restored from cache.
+
+# Every job needs the same four steps. Keeping them here means a change to the
+# install strategy lands in one place instead of three workflows.
+runs:
+  using: composite
+  steps:
+    - uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
+
+    - uses: actions/cache@v6
+      with:
+        path: ~/.bun/install/cache
+        key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+        restore-keys: ${{ runner.os }}-bun-
+
+    # --frozen-lockfile: a PR that changes package.json without committing the
+    # regenerated bun.lock fails here rather than silently resolving something
+    # different from what everyone else builds.
+    - run: bun install --frozen-lockfile
+      shell: bash

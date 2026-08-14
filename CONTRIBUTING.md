@@ -1,5 +1,35 @@
 # Contributing to 9AM UI
 
+Outside contributions are welcome. Fork, branch, open a PR — `main` is
+protected, so that is the only route in.
+
+## The short version
+
+```bash
+bun install
+# … make your change …
+bun run build        # regenerates registry.json and r/ — COMMIT THE RESULT
+bun run typecheck
+bun run preview      # eyeball it in both themes
+```
+
+`bun run build` is the step people forget. `r/` is committed on purpose — it is
+what `raw.githubusercontent.com` serves to consumers — so CI rebuilds it and
+fails the PR if your commit does not match what the sources generate. The error
+tells you exactly what to run.
+
+## What CI checks
+
+Three jobs run on every PR, all required before merge:
+
+| Job | What it does |
+|---|---|
+| `verify` | typecheck, preview build, then rebuilds `r/` and fails if the committed copy is stale |
+| `docs` | builds the docs site, so a broken MDX reference cannot merge |
+| `cli` | bundles the CLI and runs it **under node**, which is what keeps `npx 9am-ui` working |
+
+None of them need secrets, so they run normally on PRs from forks.
+
 ## Layout
 
 ```
@@ -60,9 +90,24 @@ Chromium 103. No `:has()`, no `@container`, no `oklch()` at runtime, no `mask` o
 
 ## Release
 
-```bash
-bun run build && bun run typecheck && bun run preview
-git commit -am "…" && git push
-```
+Releasing is a version bump. Nothing else publishes.
 
-CI re-runs the build and fails if the committed `r/` differs from what the sources generate, so a stale registry can't reach consumers.
+1. Bump `version` in `package.json`.
+2. Merge to `main`.
+3. Once `ci` goes green, the `release` workflow publishes `9am-ui` to npm,
+   tags the commit and opens a GitHub Release with generated notes.
+
+Any other merge to `main` — a component fix, docs, a README typo — builds and
+verifies but publishes nothing, because the version already matches npm.
+
+Two properties worth knowing:
+
+- **Release is gated on `ci`.** It triggers on `ci` completing successfully,
+  not on the push, so a red commit cannot reach npm.
+- **There is no npm token.** Publishing authenticates over OIDC against a
+  trusted publisher configured on the package, which is also what attaches the
+  provenance badge. Nothing to rotate, nothing to leak.
+
+Consumers are unaffected either way until they run `shadcn add … --overwrite`.
+The registry `r/` is served from `main`, so a merge updates it immediately —
+the npm version only governs the CLI.
