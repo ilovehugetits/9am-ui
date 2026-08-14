@@ -3,13 +3,42 @@ import { motion, type HTMLMotionProps } from "motion/react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Scrollable page body with a pinning header, edge fades and a custom scrollbar.
+ *
+ * The viewport is **transparent**: it paints no background of its own and sits
+ * directly on the page ground. That is what makes the top/bottom fades work —
+ * they are a gradient in `fadeColor`, which has to be the colour of whatever is
+ * behind the viewport, so the scrolling content dissolves into the page instead
+ * of into a band of some other colour.
+ *
+ * The dashboard idiom, inside a PageTransition:
+ *
+ * ```tsx
+ * <Viewport className="h-full min-h-0">
+ *   <ViewportHeader>
+ *     <ViewportTitle>
+ *       <SectionHeader icon={…} title={t("ui.players.title")} />
+ *     </ViewportTitle>
+ *   </ViewportHeader>
+ *   <ViewportContent className="flex flex-col gap-2.5">…</ViewportContent>
+ * </Viewport>
+ * ```
+ *
+ * On a different ground — inside a dialog or a popover — redefine the token
+ * locally rather than passing a colour, so borders and children follow too:
+ *
+ * ```tsx
+ * <Viewport className="[--background:var(--popover)]">
+ * ```
+ */
 function Viewport({
   className,
   children,
   hideBottomFade = false,
-  // fade/glass'in karıştığı renk — viewport'un kendi bg'siyle eşleşmeli.
-  // transparent viewport'larda (dashboard) sayfa zemini olan --background doğru;
-  // bg-card kullanan viewport'lar "var(--card)" geçmeli
+  // fade/glass'in karıştığı renk — viewport'un ARKASINDAKİ zeminle eşleşmeli,
+  // viewport'un kendisi şeffaf olduğu için bu --background'dır. Farklı bir zemine
+  // koyuyorsan (dialog/popover) --background'ı orada override et.
   fadeColor = "var(--background)",
   style,
   ...props
@@ -83,8 +112,11 @@ function Viewport({
     <div
       ref={scrollRef}
       data-slot="viewport"
+      // bg/border YOK: fade'in eşleşeceği tek bir zemin kalsın diye viewport
+      // şeffaf. bg-card + --background fade'i eskiden uyumsuz bir bant bırakıyor,
+      // her tüketici de bunu bg-transparent! ile eziyordu.
       className={cn(
-        "group/viewport bg-card rounded-2xl text-card-foreground border relative shadow-sm overflow-y-auto scrollbar-none mb-3",
+        "group/viewport rounded-2xl relative overflow-y-auto scrollbar-none mb-3",
         className
       )}
       // rounded + overflow'un kendi kırpması composited katmanlara (kaydırılan içerik,
